@@ -21,7 +21,7 @@ public:
    static int64_t hashmurmur(const void *buff, size_t len);
 
    static string  hexEncode(const unsigned char * buff, size_t len);
-   static string  hexDecode(const unsigned char* buff, size_t len);
+   static string    hexDecode(const unsigned char* buff, size_t len);
    
    template <typename T>
    static string  formateInteger(const T &value)

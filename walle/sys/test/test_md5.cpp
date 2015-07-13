@@ -16,9 +16,9 @@ int main(int argc, char **argv)
 	}while(result.length() == 1024*128);
 	string r = walle::sys::StringUtil::hexEncode(md5.digest(),16);
 	cout<<r<<endl;
-	string w = walle::sys::StringUtil::hexDecode((const unsigned char*)r.data(), r.length());
+	string w = walle::sys::StringUtil::hexDecode((const unsigned char*)r.c_str(), r.length());
 	//cout<<md5.toString()<<endl;
-	string r2 = walle::sys::StringUtil::hexEncode((const unsigned char*)w.data(),w.length());
+	string r2 = walle::sys::StringUtil::hexEncode((const unsigned char*)w.c_str(),w.length());
 	cout<<r2<<endl;
 	return 0;
 }

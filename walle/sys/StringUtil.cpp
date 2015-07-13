@@ -301,39 +301,37 @@ string  StringUtil::hexEncode(const unsigned char * buff, size_t len)
 string  StringUtil::hexDecode(const unsigned char* buff, size_t len)
 {
 	string result;
-	result.reserve(len + 1);
- 	char* zbuf = (char*)result.data();
-  	char* wp = zbuf;
+	result.reserve(len+1);
   	while (true) {
     	while (*buff > '\0' && *buff <= ' ') {
-      	buff++;
-    }
-    char num = 0;
-    char c = *(buff++);
+      		buff++;
+    	}
+    unsigned char num = 0;
+    unsigned char c = *(buff++);
     if (c >= '0' && c <= '9') {
-      num = c - '0';
+      	num = c - '0';
     } else if (c >= 'a' && c <= 'f') {
-      num = c - 'a' + 10;
+      	num = c - 'a' + 10;
     } else if (c >= 'A' && c <= 'F') {
-      num = c - 'A' + 10;
+      	num = c - 'A' + 10;
     } else if (c == '\0') {
-      break;
+     	 break;
     }
     c = *(buff++);
     if (c >= '0' && c <= '9') {
-      num = num * 0x10 + c - '0';
+      	num = num * 0x10 + c - '0';
     } else if (c >= 'a' && c <= 'f') {
-      num = num * 0x10 + c - 'a' + 10;
+      	num = num * 0x10 + c - 'a' + 10;
     } else if (c >= 'A' && c <= 'F') {
-      num = num * 0x10 + c - 'A' + 10;
+      	num = num * 0x10 + c - 'A' + 10;
     } else if (c == '\0') {
-      *(wp++) = num;
-      break;
+    	result.append(1, (char)num);
+     	 break;
     }
-    *(wp++) = num;
+    	result.append(1,(char)num);
   }
-  *wp = '\0';
-   result.resize(wp - zbuf);
+
+
   return result;
 }
 

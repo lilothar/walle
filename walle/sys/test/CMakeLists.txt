@@ -11,3 +11,6 @@ add_executable(test_processinfo test_processinfo.cpp)
 target_link_libraries(test_processinfo wallesys)
 add_executable(test_md5 test_md5.cpp)
 target_link_libraries(test_md5 wallesys)
+
+add_executable(test_random test_random.cpp)
+target_link_libraries(test_random wallesys)

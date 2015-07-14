@@ -1,0 +1,2 @@
+add_executable(test_addr test_addr.cpp)
+target_link_libraries(test_addr wallenet)

@@ -6,7 +6,7 @@ set(CXX_FLAGS
  -g
  # -DVALGRIND
  -DCHECK_PTHREAD_RETURN_VALUE
- #-D_FILE_OFFSET_BITS=64
+ -D_FILE_OFFSET_BITS=64
  -Wall
  -Wextra
  -Werror
@@ -30,4 +30,5 @@ set(EXECUTABLE_OUTPUT_PATH ${PROJECT_BINARY_DIR}/bin)
 set(LIBRARY_OUTPUT_PATH ${PROJECT_BINARY_DIR}/lib)
 
 add_subdirectory(walle/sys)
+add_subdirectory(walle/net)
 add_subdirectory(walle/unit)

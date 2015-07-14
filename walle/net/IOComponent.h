@@ -21,7 +21,7 @@ class IOComponent{
       };
       enum PollerStatus{
             kNew,
-            kAdd,
+            kUpdate,
             kDel
       };
 
@@ -33,6 +33,9 @@ class IOComponent{
       virtual bool handError(const Time &t) = 0;
       
       void enableReadWrite(bool readon, bool writeon);
+
+	  void joinLoop(bool readon, bool writeon);
+	  void detechLoop();
       
       void incRef() { _ref.increment(); }
       void decRef() { _ref.decrement(); }
@@ -48,8 +51,8 @@ class IOComponent{
       void setStat(const IOCStatus& stat) { _stat = stat; }
 
       IOCStatus getStat() const { return _stat; }
-      bool isUsing() const { return _using; }
-      void setUsing(bool on) { _using = on; }
+      bool isUsing() const { return _using.get() == 1 ? true : false ; }
+      void setUsing(bool on) { on == true ?_using.getAndSet(1): _using.getAndSet(0); }
       int64_t getId() { return _seqId; }
     protected:
         void update();  
@@ -58,13 +61,15 @@ class IOComponent{
         const EventFD      *_evfd;
         IOCStatus           _stat;
         AtomicInt32         _ref;
-        bool                _using;
+        AtomicInt32         _using;
         int64_t             _seqId;
+		PollerStatus        _polleractivity;
         int                 _event;
         int                 _revent;
         bool                _writeEnabled;
         bool                _readEnabled;
-        bool                _addToLoop;
+        bool                _inloop;
+		bool                _isServer;
         static AtomicInt64  gIocseq;
         static const int    kNone;
         static const int    kRead;

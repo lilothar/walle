@@ -14,13 +14,14 @@ IOComponent::IOComponent(EventLoop *loop, EventFD * fd):
 	_evfd(fd),
 	_stat(UNCONNECT),
 	_ref(),
-	_using(false),
+	_using(),
 	_seqId(gIocseq.incrementAndGet()),
 	_event(kNone),
 	_revent(kNone),
 	_writeEnabled(false),
 	_readEnabled(false),
-	_addToLoop(false)	
+	_inloop(false),
+	_isServer(false)
 	
 {
 	_evfd->setIoc(this);
@@ -33,8 +34,33 @@ IOComponent::~IOComponent()
 		_evfd = NULL;
 	}
 }
+void IOComponent::joinLoop(bool readon, bool writeon)
+{
+	assert(_inloop == false);
+	assert(isUsing() == false);
+	setUsing(true);
+	int et = _event;
+	if(readon) {
+		et |= kRead;
+	} else {
+		et &= ~kRead;
+	}
+
+	if ( writeon) {
+		et |= kWrite;
+	} else {
+		et &= ~kWrite;
+	}
+	_polleractivity = kNew;
+	update();
+	
+}
+
 void IOComponent::enableReadWrite(bool readon, bool writeon)
 {
+	assert(_inloop == true);
+	assert(isUsing() == false);
+	setUsing(true);
 	int et = _event;
 	if(readon) {
 		et |= kRead;
@@ -51,12 +77,21 @@ void IOComponent::enableReadWrite(bool readon, bool writeon)
 	if(et == _event) {
 		return ;
 	}
+	_polleractivity = kUpdate;
+	update();
+}
+void IOComponent::detechLoop()
+{
+	assert(_inloop == true);
+	assert(isUsing() == false);
+	setUsing(true);
+	_polleractivity = kDel;
 	update();
 }
 
 void IOComponent::update()
 {
-	
+		
 }
 
 }

@@ -18,6 +18,12 @@ public:
 	{
 		return __sync_bool_compare_and_swap(&_value,x,x);
 	}
+
+	bool testAndset(T oldval, T newval)
+	{
+		return __sync_bool_compare_and_swap(oldval, newval);
+	}
+	
 	
 	T getAndAdd(T x)
 	{  

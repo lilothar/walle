@@ -9,12 +9,12 @@ class EventFD;
 
 class Timer{
     public:
-        Timer(EventLoop* eloop);
+        Timer(EventLoop* loop);
         ~Timer();
         
         bool init();
 
-        bool  addTask(const TimerTask *timerTask);
+        bool  add(const TimerTask *timerTask);
 
         void  cancel(const TimerTask *timerTask);
       

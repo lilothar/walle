@@ -1,8 +1,7 @@
-#ifndef WALLE_ITASK_QUEUE_H_
-#define WALLE_ITASK_QUEUE_H_
+#ifndef WALLE_ITASK_QUEUE_H_#define WALLE_ITASK_QUEUE_H_
 #include <walle/sys/Mutex.h>
 #include <walle/sys/ScopeLock.h>
-#include <list>
+#include <vector>
 #include <walle/net/ITask.h>
 
 using walle::sys::Mutex;
@@ -36,21 +35,21 @@ class TaskQueue{
              T t(_queue.front());
              _queue.pop_front();
              return t;
-        }
-        void swap(ITaskQueue &rhs)
+        }		 size_t popAll(std::vector<T> &result)		 {			ScopeMutex lock(&_mutex);			result.swap(_queue);		 }
+        void swap(TaskQueue &rhs)
         {
             ScopeMutex lock(&_mutex);
             _queue.swap(rhs._queue)
         }
 
         bool empty()
-        {
+        {			ScopeMutex lock(&_mutex);
             return _queue.empty();
-        }
+        }		 void clear()		 {			ScopeMutex lock(&_mutex);			_queue.clear();		 }
           
     private:
         Mutex             _mutex;
-        std::list<T> _queue;
+        std::vector<T> _queue;
 };
 }
 }

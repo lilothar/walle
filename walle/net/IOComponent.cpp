@@ -35,11 +35,8 @@ IOComponent::IOComponent(EventLoop *loop, EventFD * fd):
 	_seqId(gIocseq.incrementAndGet()),
 	_event(kNone),
 	_revent(kNone),
-	_writeEnabled(false),
-	_readEnabled(false),
 	_inloop(false),
 	_isServer(false),
-	_adapter(0)
 	
 {
 	_evfd->setIoc(this);
@@ -78,7 +75,8 @@ void IOComponent::enableReadWrite(bool readon, bool writeon)
 {
 	assert(_inloop == true);
 	assert(isUsing() == false);
-	setUsing(true);
+	bool r = setUsing();
+	assert(r == true);
 	int et = _event;
 	if(readon) {
 		et |= kRead;
@@ -93,8 +91,10 @@ void IOComponent::enableReadWrite(bool readon, bool writeon)
 	}
 
 	if(et == _event) {
+		setUnusing();
 		return ;
 	}
+	
 	_polleractivity = kUpdate;
 	update();
 }
@@ -102,7 +102,7 @@ void IOComponent::detechLoop()
 {
 	assert(_inloop == true);
 	assert(isUsing() == false);
-	setUsing(true);
+	setUsing();
 	_polleractivity = kDel;
 	update();
 }
@@ -112,27 +112,26 @@ void IOComponent::update()
 	if(_owner->isInLoopThread()) {
 		updateInloop();
 	} else {
-		incRef();
-		_owner->runTask(_adapter);
-	}	
+		_owner->inQueueIoc(this);
+	}
 }
 void IOComponent::updateInloop() 
 {
-		
 	if(_polleractivity == kNew) {
 		_owner->addIoc(this,_event&kRead,_event&kWrite);
 		_inloop = true;
-		_using = false;
-		return;
+
 	} else if(_polleractivity = kUpdate) {
 		_owner->updateIoc(this,_event&kRead,_event&kWrite);
-		_using = false;
-		return ;
-	} else if(_polleractivity == KDel ){
+	} else if(_polleractivity == kDel ){
 		_owner->removeIoc(this);
 		_inloop = false;
-		_using = false;
+	} else if(_polleractivity == kNoActivity) {
+		//should never curr
 	}
+	
+	setUnusing();
+	return ;
 }
 
 }

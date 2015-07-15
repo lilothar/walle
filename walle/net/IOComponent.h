@@ -19,7 +19,8 @@ class IOComponent{
           CONNECTED,
           CLOSED
       };
-      enum PollerStatus{
+      enum PollerActivity{
+	  		kNoActivity,
             kNew,
             kUpdate,
             kDel
@@ -39,7 +40,7 @@ class IOComponent{
       
       void incRef() { _ref.increment(); }
       void decRef() { _ref.decrement(); }
-      const EventLoop *getLoop() const  { return _owner; }
+      const EventLoop *getOwner() const  { return _owner; }
       const EventFD   *getEventFD() const { return _evfd; }
       void setEvent(const int &ev) { _event = ev; }
 
@@ -49,30 +50,28 @@ class IOComponent{
       int  getRevent() { return _revent; }
       
       void setStat(const IOCStatus& stat) { _stat = stat; }
+	  IOCStatus getStat() const { return _stat; }
 
-      IOCStatus getStat() const { return _stat; }
-      bool isUsing() const { return _using.get() == 1 ? true : false ; }
-      void setUsing(bool on) { on == true ?_using.getAndSet(1): _using.getAndSet(0); }
-      int64_t getId() { return _seqId; }
-      friend class IOCTask;
+	  bool isInloop() { return _inloop; }
+	  bool isUsing() const { return _using.test(1); }
+      bool setUsing( ) { return _using.testAndset(0, 1); }
+	  bool setUnusing() { return _using.test(1, 0); }
+	  int64_t getId() { return _seqId; }
+	  //use by owner to update to poller
+	  void update();
     protected:
-        void update();  
-        void updateInloop();
-    protected:
+		void updateInloop();
         const EventLoop    *_owner;
         const EventFD      *_evfd;
         IOCStatus           _stat;
         AtomicInt32         _ref;
         AtomicInt32         _using;
         int64_t             _seqId;
-		PollerStatus        _polleractivity;
+		PollerActivity      _polleractivity;
         int                 _event;
         int                 _revent;
-        bool                _writeEnabled;
-        bool                _readEnabled;
         bool                _inloop;
 		bool                _isServer;
-        ITask              *_adapter;
         static AtomicInt64  gIocseq;
         static const int    kNone;
         static const int    kRead;

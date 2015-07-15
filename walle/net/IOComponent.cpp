@@ -1,8 +1,25 @@
 #include <walle/net/IOComponent.h>
 #include <sys/epoll.h>
-
+#include <walle/net/ITask.h>
 namespace walle {
 namespace net{
+
+
+class IOCTask:public ITask {
+	public:
+		IOCTask(void *data)
+		{
+			setUserData(data);
+		}
+		virtual void runTask()
+		{
+			IOComponent* ioc = (IOComponent*)_userData;
+			ioc->update();
+			ioc->decRef();
+		}
+
+};
+
 const int IOComponent::kNone = 0;
 const int IOComponent::kRead = EPOLLIN;
 const int IOComponent::kWrite = EPOLLOUT;
@@ -21,7 +38,8 @@ IOComponent::IOComponent(EventLoop *loop, EventFD * fd):
 	_writeEnabled(false),
 	_readEnabled(false),
 	_inloop(false),
-	_isServer(false)
+	_isServer(false),
+	_adapter(0)
 	
 {
 	_evfd->setIoc(this);
@@ -91,7 +109,30 @@ void IOComponent::detechLoop()
 
 void IOComponent::update()
 {
+	if(_owner->isInLoopThread()) {
+		updateInloop();
+	} else {
+		incRef();
+		_owner->runTask(_adapter);
+	}	
+}
+void IOComponent::updateInloop() 
+{
 		
+	if(_polleractivity == kNew) {
+		_owner->addIoc(this,_event&kRead,_event&kWrite);
+		_inloop = true;
+		_using = false;
+		return;
+	} else if(_polleractivity = kUpdate) {
+		_owner->updateIoc(this,_event&kRead,_event&kWrite);
+		_using = false;
+		return ;
+	} else if(_polleractivity == KDel ){
+		_owner->removeIoc(this);
+		_inloop = false;
+		_using = false;
+	}
 }
 
 }

@@ -1,0 +1,2 @@
+add_executable(simplereader simplewriter.cpp)
+add_executable(simplewriter simplewriter.cpp)

@@ -54,8 +54,10 @@ class IOComponent{
       bool isUsing() const { return _using.get() == 1 ? true : false ; }
       void setUsing(bool on) { on == true ?_using.getAndSet(1): _using.getAndSet(0); }
       int64_t getId() { return _seqId; }
+      friend class IOCTask;
     protected:
         void update();  
+        void updateInloop();
     protected:
         const EventLoop    *_owner;
         const EventFD      *_evfd;
@@ -70,6 +72,7 @@ class IOComponent{
         bool                _readEnabled;
         bool                _inloop;
 		bool                _isServer;
+        ITask              *_adapter;
         static AtomicInt64  gIocseq;
         static const int    kNone;
         static const int    kRead;

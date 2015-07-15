@@ -1,4 +1,2 @@
-file(GLOB HEADERS "*.h")
-install(FILES ${HEADERS} DESTINATION include/walle/ext/json)
-
+install(DIRECTORY json DESTINATION include/walle/ext)
 add_subdirectory(test)

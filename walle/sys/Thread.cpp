@@ -165,6 +165,7 @@ int64_t Thread::hash() {
 static void* threadrun(void* arg) {
   Thread* thread = (Thread*)arg;
   LocalThread::tid();
+  LOG_INFO<<LocalThread::tid();
   thread->run();
   return NULL;
 }

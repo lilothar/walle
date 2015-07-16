@@ -1,89 +1,90 @@
 #include <walle/net/EventLoop.h>
-#include <walle/net/TimerTask.h>
 namespace walle {
+namespace LocalThread {
 
+	__thread walle::net::EventLoop *t_EventLoop;
+}
 namespace net {
+	
 
-bool EventLoop::addIoc(IOComponent*ioc, bool readon, bool writeon)
+EventLoop::EventLoop():
+	_taskQueue(),
+	_mytask(),
+	_quit(false),
+	_thid(walle::LocalThread::tid())
 {
-	_poller->addEvent(ioc->getEventFD(), readon, writeon);
+	walle::LocalThread::t_EventLoop = this;
+	LOG_INFO<<_thid;
+	LOG_INFO<<walle::LocalThread::tid();
+	LOG_INFO<<pthread_self();
+	
 }
+EventLoop::~EventLoop()
+{
+	assertInloop();
+	walle::LocalThread::t_EventLoop = NULL;
 
-void EventLoop::inQueueIoc(IOComponent *ioc)
-{
-	_delayedIoc.push(ioc);
-}
-bool EventLoop::updateIoc(IOComponent*ioc, bool readon, bool writeon)
-{
-	_poller->setEvent(ioc->getEventFD(), readon, writeon);
-}
-void EventLoop::removeIoc(IOComponent*ioc)
-{
-	_poller->removeEvent(ioc->getEventFD());
-}
-
-EventLoop()
-{
-
-}
-~EventLoop()
-{
-
+	_taskQueue.popAll(_mytask);
+	for(size_t i = 0; i <_mytask.size(); i++) {
+		delete _mytask[i];
+	}
+	
 }
 bool EventLoop::isInLoopThread()
 {
 	return _thid == walle::LocalThread::tid();
 }
-void EventLoop::addTimer(TimerTask *task)
+EventLoop* EventLoop::getLocalEventLoop()
 {
-	if(isInLoopThread()) {
-		_timer->addTask(task);
-	} else {
-		_timerTaskqueue.push(task);
-	}
+	return 	walle::LocalThread::t_EventLoop;
 }
-void EventLoop::wakeUp();
+
 void EventLoop::runTask(ITask *task)
 {
-	if(isInLoopThread()) {
+	if(!task) {
+		LOG_WARN<<"a null type task";
+	}
+	if (isInLoopThread()) {
 		task->runTask();
 	} else {
 		_taskQueue.push(task);
 	}
 }
-
-void EventLoop::doDelayedIocOpt()
-{
-	_myIoc.clear();
-	size_t queuesize = _delayedIoc.popAll(_myIoc);
-	for(size_t i = 0; i < queuesize; i++) {
-		IOComponent *ioc = _myIoc[i];
-		ioc->update();
-	}
-}
-void EventLoop::dotaskInloop() 
-{
-	_mytask.clear();
-	size_t queuesize = _delayedIoc.popAll(_myIoc);
-	for(size_t i = 0; i < queuesize; i++) {
-		ITask *task = _mytask[i];
-		task->runTask();
-	}
-}
-
 void EventLoop::loop()
 {
+	assertInloop();
 	while(!_quit) {
-		doDelayedIocOpt();	
-		dotaskInloop();
-
+		
+		doTaskInloop();
+		
 	}
 }
 
-void EventLoop::runTimerTaskInloop()
+void EventLoop::doTaskInloop()
 {
+	assertInloop();
+	_taskQueue.popAll(_mytask);
+	if(_mytask.empty()) {
+		return;
+	}
 
+	for(size_t i = 0; i <_mytask.size(); i++) {
+		_mytask[i]->runTask();
+		delete _mytask[i];
+	}
+	_mytask.clear();
 }
+
+void EventLoop::assertInloop()
+{
+	if(isInLoopThread()) {
+		return;
+	}
+	LOG_ERROR<<_thid<<" "<<walle::LocalThread::tid();
+	LOG_ERROR<<"not in loop thread";
+	assert(false);
+}
+
 
 }
 }

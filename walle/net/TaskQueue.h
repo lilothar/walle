@@ -35,11 +35,11 @@ class TaskQueue{
              T t(_queue.front());
              _queue.pop_front();
              return t;
-        }		 size_t popAll(std::vector<T> &result)		 {			ScopeMutex lock(&_mutex);			result.swap(_queue);		 }
+        }		 size_t popAll(std::vector<T> &result)		 {			ScopeMutex lock(&_mutex);			result.swap(_queue);			return result.size();		 }
         void swap(TaskQueue &rhs)
         {
             ScopeMutex lock(&_mutex);
-            _queue.swap(rhs._queue)
+            _queue.swap(rhs._queue);
         }
 
         bool empty()

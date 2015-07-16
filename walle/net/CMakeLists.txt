@@ -1,8 +1,7 @@
 set(NET_SRC
 	Buffer
 	Addrinet
-	TimerTask
-	EventFD
+	EventLoop
 	)
 add_library(wallenet ${NET_SRC})
 target_link_libraries(wallenet  wallesys pthread rt)

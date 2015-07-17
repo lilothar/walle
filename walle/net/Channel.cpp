@@ -1,11 +1,11 @@
 #include <walle/net/Channel.h>
-#include <walle/net/Eventloop.h>
+#include <walle/net/EventLoop.h>
 
 #include <sstream>
 
 #include <poll.h>
 
-using namespace dlsys;
+using namespace walle::sys;
 
 namespace walle {
 namespace net {
@@ -45,7 +45,7 @@ Channel::~Channel()
   assert(!_eventHandling);
   assert(!_addedToLoop);
   assert(!_loop->hasChannel(this));
-  _loop->abortNotInLoopThread();  
+  _loop->assertInLoopThread();  
 }
 
 void Channel::tie(const boost::shared_ptr<void>& obj)

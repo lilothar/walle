@@ -1,5 +1,5 @@
-#ifndef DYLIN_CHANNEL_H_
-#define DYLIN_CHANNEL_H_
+#ifndef WALLE_CHANNEL_H_
+#define WALLE_CHANNEL_H_
 #include <boost/function.hpp>
 #include <boost/shared_ptr.hpp>
 #include <boost/weak_ptr.hpp>
@@ -76,8 +76,7 @@ class Channel {
   int                   _index; // used by Poller.
   bool                  _logHup;
 
-  boost::shared_ptr<void> _tie;
-  bool                    
+  boost::shared_ptr<void> _tie;                   
   bool                  _eventHandling;
   bool                  _addedToLoop;
   ReadEventCallback     _readCallback;
@@ -85,6 +84,11 @@ class Channel {
   EventCallback         _closeCallback;
   EventCallback         _errorCallback;
 };
+
+typedef boost::weak_ptr<Channel> WeakChannel;
+typedef boost::shared_ptr<Channel> ChannelPtr;
+
+
 }
 }
 

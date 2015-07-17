@@ -1,14 +1,14 @@
-#ifndef DYLIN_POLLER_H_
-#define DYLIN_POLLER_H_
+#ifndef WALLE_POLLER_H_
+#define WALLE_POLLER_H_
 
 #include <map>
 #include <vector>
 #include <boost/noncopyable.hpp>
 
 #include <walle/sys/Time.h>
-#include <walle/net/Eventloop.h>
+#include <walle/net/EventLoop.h>
 
-using namespace dlsys;
+using namespace walle::sys;
 
 struct epoll_event;
 

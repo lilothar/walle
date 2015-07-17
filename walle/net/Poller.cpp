@@ -111,7 +111,7 @@ void Poller::updateChannel(Channel* channel)
 }
 void Poller::removeChannel(Channel* channel)
 {
-  Poller::assertInLoopThread();
+  _ownerLoop->assertInLoopThread();
   int fd = channel->fd();
   assert(_channels.find(fd) != _channels.end());
   assert(_channels[fd] == channel);

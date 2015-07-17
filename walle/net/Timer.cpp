@@ -1,5 +1,5 @@
 #include <walle/net/Timer.h>
-#include <walle/net/Eventloop.h>
+#include <walle/net/EventLoop.h>
 #include <boost/bind.hpp>
 #include <sys/timerfd.h>
 
@@ -66,19 +66,30 @@ namespace net {
 Timer::Timer(EventLoop* loop)
   : _loop(loop),
     _timerfd(util::createTimerfd()),
-    _timerfdChannel(loop, _timerfd),
+    _timerfdChannel(),
     _tasks(),
     _callingExpiredTasks(false)
 {
-  _timerfdChannel.setReadCallback(
-      boost::bind(&Timer::handleRead, this));
+
   // we are always reading the timerfd, we disarm it with timerfd_settime.
-  _timerfdChannel.enableReading();
+  	
 }
+
+void Timer::start()
+{
+	ChannelPtr guard(new Channel(_loop, _timerfd)); 
+	_timerfdChannel	=  guard;
+	guard->tie(shared_from_this());
+	guard->setReadCallback(
+      boost::bind(&Timer::handleRead, this,_1));
+	guard->enableReading();
+}
+
 void Timer::stop()
 {
-	_loop->runInLoop(boost::bind(&Channel::disableAll, _timerfdChannel));
-	_loop->runInLoop(boost::bind(&Channel::remove, _timerfdChannel))
+	ChannelPtr guard(_timerfdChannel);
+	_loop->runInLoop(boost::bind(&Channel::disableAll, guard));
+	_loop->runInLoop(boost::bind(&Channel::remove, guard));
 }
 
 Timer::~Timer()
@@ -138,7 +149,7 @@ void Timer::cancelInLoop(TimerId timerId)
   assert(_tasks.size() == _activeTasks.size());
 }
 
-void Timer::handleRead()
+void Timer::handleRead(Time t)
 {
   _loop->assertInLoopThread();
   Time now(Time::now());
@@ -163,7 +174,7 @@ std::vector<Timer::Entry> Timer::getExpired(Time now)
 {
   assert(_tasks.size() == _activeTasks.size());
   std::vector<Entry> expired;
-  Entry sentry(now, reinterpret_cast<TimerTask*>(UINT64MAX));
+  Entry sentry(now, reinterpret_cast<TimerTask*>(UINTPTR_MAX));
   TaskList::iterator end = _tasks.lower_bound(sentry);
   assert(end == _tasks.end() || now < end->first);
   std::copy(_tasks.begin(), end, back_inserter(expired));

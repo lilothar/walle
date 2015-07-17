@@ -1,39 +1,61 @@
-#ifndef WALLE_POLLER_H_
-#define WALLE_POLLER_H_
-#include <walle/sys/Time.h>
-#include <sys/epoll.h>
+#ifndef DYLIN_POLLER_H_
+#define DYLIN_POLLER_H_
+
+#include <map>
 #include <vector>
+#include <boost/noncopyable.hpp>
 
+#include <walle/sys/Time.h>
+#include <walle/net/Eventloop.h>
 
-using walle::sys::Time;
-namespace walle {
+using namespace dlsys;
 
+struct epoll_event;
+
+namespace walle{
 namespace net {
-class EventLoop;
-class IOComponent;
-class EventFD;
-class Poller{
+
+class Channel;
+
+class Poller {
     public:
-        typedef vector<IOComponent* > IOCEventList;
-    public:
-        Poller(EventLoop *loop);
-        ~Poller();
-        bool init();
-        bool addEvent(EventFD *fd, bool readon, bool writeon);
-        bool setEvent(EventFD *fd, bool readon, bool writeon);
-        void removeEvent(EventFD *fd);
-        Time getEvents(IOCEventList &list, int timeoutms = 1);
-   private:
-      static const int kinitEventListSize = 32;
-      typedef std::vector<struct epoll_event> EpollEventList;
-      void  fillEventList(size_t num, IOCEventList &result);
-   private:
-      EventLoop      *_owner;
-      int             _epfd;
-      EpollEventList  _events;
-    
-    
+          typedef std::vector<Channel*> ChannelList;
+
+          Poller(EventLoop* loop);
+          virtual ~Poller();
+
+          /// Polls the I/O events.
+          /// Must be called in the loop thread.
+          Time poll(int timeoutMs, ChannelList* activeChannels);
+
+          /// Changes the interested I/O events.
+          /// Must be called in the loop thread.
+          void updateChannel(Channel* channel);
+
+          /// Remove the channel, when it destructs.
+          /// Must be called in the loop thread.
+          void removeChannel(Channel* channel);
+
+          bool hasChannel(Channel* channel) const;
+
+ private:
+          typedef std::map<int, Channel*> ChannelMap;
+          typedef std::vector<struct epoll_event> EventList;
+          
+          ChannelMap _channels;
+          EventLoop* _ownerLoop;
+          static const int kInitEventListSize = 16;
+
+          
+
+          int       _epollfd;
+          EventList _events;
+ private:
+         void fillActiveChannels(int numEvents,
+                          ChannelList* activeChannels) const;
+         void update(int operation, Channel* channel);
 };
+
 }
 }
 #endif

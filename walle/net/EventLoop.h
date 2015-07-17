@@ -1,34 +1,135 @@
-#ifndef WALLE_EVENTLOOP_H_
-#define WALLE_EVNETLOOP_H_
+#ifndef DYLIN_EVENTLOOP_H_
+#define DYLIN_EVENTLOOP_H_
+#include <vector>
 
-#include <pthread.h>
+#include <boost/function.hpp>
+#include <boost/noncopyable.hpp>
+#include <boost/scoped_ptr.hpp>
+
 #include <walle/sys/wallesys.h>
-#include <walle/net/ITask.h>
-#include <walle/net/TaskQueue.h>
+#include <walle/net/Callback.h>
+#include <walle/net/TimerId.h>
+#include <walle/base/CurrentThread.h>
+#include <stdint.h>
 
+using namespace walle::sys;
+namespace walle {
+namespace net {
+class Channel;
+class Poller;
+class Timer;
 
-namespace walle{
-namespace net{
+///
+/// Reactor, at most one per thread.
+///
+/// This is an interface class, so don't expose too much details.
+class EventLoop
+{
+ public:
+  typedef boost::function<void()> Functor;
 
-class EventLoop{
-    public:
-       EventLoop();
-       ~EventLoop();
-	   bool isInLoopThread();
-       void runTask(ITask *task);
-       void loop();
-	   void assertInloop();
-	   static EventLoop* getLocalEventLoop();
-	private:
-	   void doTaskInloop();
-    private:
-		//Poller                *_poller;
-        TaskQueue<ITask* >     _taskQueue;
-		vector<ITask* >         _mytask;
-		bool                    _quit;
-		pthread_t               _thid;
-        
-        
+  EventLoop();
+  ~EventLoop();  // force out-line dtor, for scoped_ptr members.
+
+  ///
+  /// Loops forever.
+  ///
+  /// Must be called in the same thread as creation of the object.
+  ///
+  void loop();
+
+  /// Quits loop.
+  ///
+  /// This is not 100% thread safe, if you call through a raw pointer,
+  /// better to call through shared_ptr<EventLoop> for 100% safety.
+  void quit();
+
+  ///
+  /// Time when poll returns, usually means data arrival.
+  ///
+  Time pollReturnTime() const { return _pollReturnTime; }
+
+  int64_t iteration() const { return _iteration; }
+
+  /// Runs callback immediately in the loop thread.
+  /// It wakes up the loop, and run the cb.
+  /// If in the same loop thread, cb is run within the function.
+  /// Safe to call from other threads.
+  void runInLoop(const Functor& cb);
+  /// Queues callback in the loop thread.
+  /// Runs after finish pooling.
+  /// Safe to call from other threads.
+  void queueInLoop(const Functor& cb);
+
+  // timers
+
+  ///
+  /// Runs callback at 'time'.
+  /// Safe to call from other threads.
+  ///
+  TimerId runAt(const Time& time, const TimerCallback& cb);
+  ///
+  /// Runs callback after @c delay seconds.
+  /// Safe to call from other threads.
+  ///
+  TimerId runAfter(int64_t delay, const TimerCallback& cb);
+  ///
+  /// Runs callback every @c interval seconds.
+  /// Safe to call from other threads.
+  ///
+  TimerId runEvery(int64_t interval, const TimerCallback& cb);
+  ///
+  /// Cancels the timer.
+  /// Safe to call from other threads.
+  ///
+  void cancel(TimerId timerId);
+
+  // internal usage
+  void wakeup();
+  void updateChannel(Channel* channel);
+  void removeChannel(Channel* channel);
+  bool hasChannel(Channel* channel);
+
+  // pid_t threadId() const { return threadId_; }
+  void assertInLoopThread()
+  {
+    if (!isInLoopThread())
+    {
+      abort();
+    }
+  }
+  bool isInLoopThread() const { return _threadId == CurrentThread::tid(); }
+  // bool callingPendingFunctors() const { return callingPendingFunctors_; }
+  bool eventHandling() const { return _eventHandling; }
+
+  static EventLoop* getEventLoopOfCurrentThread();
+
+ private:
+  void abortNotInLoopThread();
+  void handleRead();  // waked up
+  void doPendingFunctors();
+
+  void printActiveChannels() const; // DEBUG
+
+  typedef std::vector<Channel*> ChannelList;
+
+  bool                      _looping; /* atomic */
+  bool                      _quit; /* atomic and shared between threads, okay on x86, I guess. */
+  bool                      _eventHandling; /* atomic */
+  bool                      _callingPendingFunctors; /* atomic */
+  int64_t                   _iteration;
+  const pthread_t           _threadId;
+  Time                      _pollReturnTime;
+  boost::scoped_ptr<Poller> _poller;
+  boost::scoped_ptr<Timer>  _timer;
+  int                       _wakeupFd;
+  // unlike in TimerQueue, which is an internal class,
+  // we don't expose Channel to client.
+  boost::scoped_ptr<Channel> _wakeupChannel;
+  ChannelList                _activeChannels;
+  Channel                   *_currentActiveChannel;
+  Mutex                      _mutex;
+  std::vector<Functor>       _pendingFunctors; // @GuardedBy mutex_
 };
 }
 }

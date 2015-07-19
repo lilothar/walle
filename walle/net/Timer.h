@@ -9,8 +9,6 @@
 #include <walle/net/Channel.h>
 #include <walle/net/TimerId.h>
 #include <walle/net/Timertask.h>
-#include <boost/enable_shared_from_this.hpp>
-
 using namespace walle::sys;
 namespace walle {
 namespace net{
@@ -19,12 +17,16 @@ class EventLoop;
 class TimerTask;
 class TimerId;
 
-
-class Timer:public boost::enable_shared_from_this<Timer> {
+///
+/// A best efforts timer queue.
+/// No guarantee that the callback will be on time.
+///
+class Timer
+{
  public:
   Timer(EventLoop* loop);
   ~Timer();
-  
+
   ///
   /// Schedules the callback to be run at given time,
   /// repeats if @c interval > 0.0.
@@ -35,13 +37,10 @@ class Timer:public boost::enable_shared_from_this<Timer> {
                    int64_t interval);
 
   void cancel(TimerId timerId);
-  void start();
-  void stop();
-  ChannelPtr channel() { return ChannelPtr(_timerfdChannel); }
 private:
   Timer& operator=(const Timer&);
   Timer(const Timer&);
-private:
+ private:
 
   // FIXME: use unique_ptr<Timer> instead of raw pointers.
   typedef std::pair<Time, TimerTask*> Entry;
@@ -52,7 +51,7 @@ private:
   void addTimerInLoop(TimerTask* task);
   void cancelInLoop(TimerId timerId);
   // called when timerfd alarms
-  void handleRead(Time t);
+  void handleRead();
   // move out all expired timers
   std::vector<Entry> getExpired(Time now);
   void reset(const std::vector<Entry>& expired, Time now);
@@ -60,14 +59,14 @@ private:
   bool insert(TimerTask* task);
 
   EventLoop* _loop;
-  const int  _timerfd;
-  WeakChannel _timerfdChannel;
+  const int _timerfd;
+  Channel _timerfdChannel;
   // Timer list sorted by expiration
-  TaskList   _tasks;
+  TaskList _tasks;
 
   // for cancel()
   ActiveTaskSet _activeTasks;
-  bool          _callingExpiredTasks; /* atomic */
+  bool _callingExpiredTasks; /* atomic */
   ActiveTaskSet _cancelingTasks;
 };
 

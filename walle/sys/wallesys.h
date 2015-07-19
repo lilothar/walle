@@ -50,5 +50,6 @@
 #include <walle/sys/Url.h>
 #include <walle/sys/MD5.h>
 #include <walle/sys/Random.h>
+#include <walle/sys/Weakcall.h>
 
 #endif

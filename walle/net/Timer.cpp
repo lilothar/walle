@@ -1,12 +1,18 @@
 #include <walle/net/Timer.h>
-#include <walle/net/EventLoop.h>
+#include <walle/sys/wallesys.h>
+#include <walle/net/Eventloop.h>
+#include <walle/net/Timer.h>
+#include <walle/net/TimerId.h>
+
 #include <boost/bind.hpp>
+
 #include <sys/timerfd.h>
-
 using namespace walle::sys; 
-namespace walle{
+using namespace walle::net; 
 
-namespace util {
+namespace walle {
+
+namespace util{
 
 int createTimerfd()
 {
@@ -59,41 +65,25 @@ void resetTimerfd(int timerfd, Time expiration)
    LOG_ERROR<<"timerfd_settime()";
   }
 }
-
-}//end util
-
+}
 namespace net {
 Timer::Timer(EventLoop* loop)
   : _loop(loop),
     _timerfd(util::createTimerfd()),
-    _timerfdChannel(),
+    _timerfdChannel(loop, _timerfd),
     _tasks(),
     _callingExpiredTasks(false)
 {
-
+  _timerfdChannel.setReadCallback(
+      boost::bind(&Timer::handleRead, this));
   // we are always reading the timerfd, we disarm it with timerfd_settime.
-  	
-}
-
-void Timer::start()
-{
-	ChannelPtr guard(new Channel(_loop, _timerfd)); 
-	_timerfdChannel	=  guard;
-	guard->tie(shared_from_this());
-	guard->setReadCallback(
-      boost::bind(&Timer::handleRead, this,_1));
-	guard->enableReading();
-}
-
-void Timer::stop()
-{
-	ChannelPtr guard(_timerfdChannel);
-	_loop->runInLoop(boost::bind(&Channel::disableAll, guard));
-	_loop->runInLoop(boost::bind(&Channel::remove, guard));
+  _timerfdChannel.enableReading();
 }
 
 Timer::~Timer()
 {
+  _timerfdChannel.disableAll();
+  _timerfdChannel.remove();
   ::close(_timerfd);
   // do not remove channel, since we're in EventLoop::dtor();
   for (TaskList::iterator it = _tasks.begin();
@@ -149,7 +139,7 @@ void Timer::cancelInLoop(TimerId timerId)
   assert(_tasks.size() == _activeTasks.size());
 }
 
-void Timer::handleRead(Time t)
+void Timer::handleRead()
 {
   _loop->assertInLoopThread();
   Time now(Time::now());

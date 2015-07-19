@@ -4,7 +4,6 @@
 #include <walle/net/Callback.h>
 #include <stdint.h>
 using namespace walle::sys;
-
 namespace walle {
 namespace net {
 class TimerTask {
@@ -33,13 +32,14 @@ class TimerTask {
 
  private:
   const TimerCallback _callback;
-  Time                _expiration;
-  const int64_t       _interval;
-  const bool          _repeat;
-  const int64_t       _sequence;
+  Time _expiration;
+  const int64_t _interval;
+  const bool _repeat;
+  const int64_t _sequence;
 
-  static AtomicInt64  _gTimerNum;
+  static AtomicInt64 _gTimerNum;
 };
 }
 }
+
 #endif

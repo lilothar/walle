@@ -9,15 +9,14 @@
 #include <walle/sys/wallesys.h>
 #include <walle/net/Callback.h>
 #include <walle/net/TimerId.h>
-#include <walle/net/Timer.h>
-#include <walle/net/Waker.h>
-#include <walle/net/Channel.h>
 #include <stdint.h>
 
 using namespace walle::sys;
 namespace walle {
 namespace net {
+class Channel;
 class Poller;
+class Timer;
 
 ///
 /// Reactor, at most one per thread.
@@ -95,7 +94,7 @@ class EventLoop
   {
     if (!isInLoopThread())
     {
-      abort();
+      abortNotInLoopThread();
     }
   }
   bool isInLoopThread() const { return _threadId == walle::LocalThread::tid(); }
@@ -106,6 +105,7 @@ class EventLoop
 
  private:
   void abortNotInLoopThread();
+  void handleRead();  // waked up
   void doPendingFunctors();
 
   void printActiveChannels() const; // DEBUG
@@ -120,17 +120,17 @@ class EventLoop
   const pthread_t           _threadId;
   Time                      _pollReturnTime;
   boost::scoped_ptr<Poller> _poller;
-  boost::weak_ptr<Timer>    _timer;
-  ChannelPtr                _timerChannel;
-  boost::weak_ptr<Waker>    _waker;
-  ChannelPtr                _wakerChannel;
+  boost::scoped_ptr<Timer>  _timer;
+  int                       _wakeupFd;
   // unlike in TimerQueue, which is an internal class,
   // we don't expose Channel to client.
+  boost::scoped_ptr<Channel> _wakeupChannel;
   ChannelList                _activeChannels;
   Channel                   *_currentActiveChannel;
   Mutex                      _mutex;
   std::vector<Functor>       _pendingFunctors; // @GuardedBy mutex_
 };
 }
+
 }
 #endif

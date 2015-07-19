@@ -1,5 +1,5 @@
-#ifndef WALLE_ENDIAN_H_
-#define WALLE_ENDIAN_H_
+#ifndef ENDIAN_H_
+#define ENDIAN_H_
 #include <stdint.h>
 #include <endian.h>
 #if defined(__clang__) || __GNUC_MINOR__ >= 6
@@ -7,9 +7,8 @@
 #endif
 #pragma GCC diagnostic ignored "-Wconversion"
 #pragma GCC diagnostic ignored "-Wold-style-cast"
-namespace walle {
-
-namespace net {
+namespace walle{
+namespace net{
 class Endian
 {
 public:

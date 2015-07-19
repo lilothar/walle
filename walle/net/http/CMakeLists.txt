@@ -1,0 +1,10 @@
+set(http_SRCS
+  Httpserver.cpp
+  Httpresponse.cpp
+  )
+add_library(wallehttp ${http_SRCS})
+target_link_libraries(wallehttp wallenet wallesys)
+install(TARGETS wallehttp DESTINATION lib)
+file(GLOB HTTPHEADERS "*.h")
+install(FILES ${HTTPHEADERS} DESTINATION include/dylin/net/http)
+add_subdirectory(test)

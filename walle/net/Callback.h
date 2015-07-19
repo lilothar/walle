@@ -27,6 +27,7 @@ void defaultConnectionCallback(const TcpConnectionPtr& conn);
 void defaultMessageCallback(const TcpConnectionPtr& conn,
                             Buffer* buffer,
                             Time receiveTime);
+
 }
 }
 

@@ -1,7 +1,10 @@
 #include <walle/net/Poller.h>
+
 #include <walle/net/Channel.h>
-#include <walle/sys/wallesys.h>
-#include <walle/net/EventLoop.h>
+
+#include <walle/sys/Logging.h>
+#include <walle/net/Channel.h>
+
 #include <assert.h>
 #include <errno.h>
 #include <poll.h>
@@ -17,7 +20,7 @@ const int kDeleted = 2;
 
 using namespace walle::sys;
 namespace walle {
-namespace net{
+namespace net {
 Poller::Poller(EventLoop* loop):_ownerLoop(loop),
 	_epollfd(::epoll_create1(EPOLL_CLOEXEC)),
 	_events(kInitEventListSize)
@@ -75,7 +78,7 @@ void Poller::fillActiveChannels(int numEvents,
 
 void Poller::updateChannel(Channel* channel)
 {
-  _ownerLoop->assertInLoopThread();
+  Poller::assertInLoopThread();
   const int index = channel->index();
   if (index == kNew || index == kDeleted)
   {
@@ -111,7 +114,7 @@ void Poller::updateChannel(Channel* channel)
 }
 void Poller::removeChannel(Channel* channel)
 {
-  _ownerLoop->assertInLoopThread();
+  Poller::assertInLoopThread();
   int fd = channel->fd();
   assert(_channels.find(fd) != _channels.end());
   assert(_channels[fd] == channel);
@@ -146,11 +149,9 @@ void Poller::update(int operation, Channel* channel)
 
 bool Poller::hasChannel(Channel* channel) const
 {
-  _ownerLoop->assertInLoopThread();
+  assertInLoopThread();
   ChannelMap::const_iterator it = _channels.find(channel->fd());
   return it != _channels.end() && it->second == channel;
 }
-
-
 }
 }

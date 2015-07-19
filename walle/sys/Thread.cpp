@@ -38,7 +38,7 @@ namespace walle{
 	}
 	bool isMainThread()
 	{
- 		 return tid() == static_cast<pthread_t>(::pthread_self());
+ 		  return tid() == (pthread_t)::getpid();
 	}
 }
 namespace sys {	

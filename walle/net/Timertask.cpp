@@ -2,6 +2,7 @@
 using namespace walle::sys;
 namespace walle {
 namespace net {
+	
 AtomicInt64 TimerTask::_gTimerNum;
 
 void TimerTask::restart(const Time &now)
@@ -16,4 +17,5 @@ void TimerTask::restart(const Time &now)
   }
 }
 }
+
 }

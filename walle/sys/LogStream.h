@@ -2,6 +2,7 @@
 #define WALLE_LOGSTREAM_H_
 #include <walle/sys/Fixbuffer.h>
 #include <walle/sys/StringUtil.h>
+#include <walle/sys/StringPice.h>
 
 namespace walle {
 

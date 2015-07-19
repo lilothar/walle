@@ -1,15 +1,14 @@
+#include <walle/sys/Logging.h>
 #include <walle/net/Channel.h>
-#include <walle/net/EventLoop.h>
+#include <walle/net/Eventloop.h>
 
 #include <sstream>
 
 #include <poll.h>
 
+using namespace walle::net;
+
 using namespace walle::sys;
-
-namespace walle {
-namespace net {
-
 
 
 const int Channel::kNoneEvent = 0;
@@ -23,6 +22,7 @@ Channel::Channel()
     _revents(0),
     _index(-1),
     _logHup(true),
+    _tied(false),
     _eventHandling(false),
     _addedToLoop(false)
 {
@@ -35,6 +35,7 @@ Channel::Channel(EventLoop* loop, int sockfd)
     _revents(0),
     _index(-1),
     _logHup(true),
+    _tied(false),
     _eventHandling(false),
     _addedToLoop(false)
 {
@@ -44,21 +45,23 @@ Channel::~Channel()
 {
   assert(!_eventHandling);
   assert(!_addedToLoop);
-  assert(!_loop->hasChannel(this));
-  _loop->assertInLoopThread();  
+  if (_loop->isInLoopThread())
+  {
+    assert(!_loop->hasChannel(this));
+  }
 }
 
 void Channel::tie(const boost::shared_ptr<void>& obj)
 {
   _tie = obj;
-  assert(_tie != NULL);
+  _tied = true;
 }
 
 void Channel::update()
 {
-  	_addedToLoop = true;
-  	_loop->updateChannel(this);
-}	
+  _addedToLoop = true;
+  _loop->updateChannel(this);
+}
 
 void Channel::remove()
 {
@@ -69,36 +72,53 @@ void Channel::remove()
 
 void Channel::handleEvent(Time receiveTime)
 {
-	_eventHandling = true;
-	if ((_revents & POLLHUP) && !(_revents & POLLIN)) {
-    	if (_logHup) {
-      		LOG_WARN<<"Channel::handle_event() POLLHUP";
-    	}
-    	if (_closeCallback) {
-			_closeCallback();
-    	}
-	}
 
-  	if (_revents & POLLNVAL) {
-    	LOG_WARN<<"Channel::handle_event() POLLNVAL";
-  	}
+  boost::shared_ptr<void> guard;
+  if (_tied)
+  {
+    guard = _tie.lock();
+    if (guard)
+    {
+      handleEventWithGuard(receiveTime);
+    }
+  }
+  else
+  {
+    handleEventWithGuard(receiveTime);
+  }
+}
 
-  	if (_revents& (POLLERR | POLLNVAL)) {
-    	if (_errorCallback) {
-			_errorCallback();
-    	}
-  	}
-  	if (_revents & (POLLIN | POLLPRI | POLLRDHUP)) {
-    	if (_readCallback) {
-			_readCallback(receiveTime);
-  		}
-  	}
-  	if (_revents & POLLOUT) {
- 		if (_writeCallback)  {
-			_writeCallback();
- 		}
-  	}
-  	_eventHandling = false;
+void Channel::handleEventWithGuard(Time receiveTime)
+{
+  _eventHandling = true;
+  if ((_revents & POLLHUP) && !(_revents & POLLIN))
+  {
+    if (_logHup)
+    {
+      LOG_WARN<<"Channel::handle_event() POLLHUP";
+    }
+    if (_closeCallback) _closeCallback();
+  }
+
+  if (_revents & POLLNVAL)
+  {
+    LOG_WARN<<"Channel::handle_event() POLLNVAL";
+  }
+
+  if (_revents& (POLLERR | POLLNVAL))
+  {
+    if (_errorCallback) _errorCallback();
+  }
+  if (_revents & (POLLIN | POLLPRI | POLLRDHUP))
+  {
+    if (_readCallback) _readCallback(receiveTime);
+  }
+  if (_revents & POLLOUT)
+  {
+    if (_writeCallback) _writeCallback();
+  }
+   LOG_DEBUG<<"Channel::handleEvent fd;"<<_fd;
+  _eventHandling = false;
 }
 
 string Channel::reventsToString() const
@@ -121,7 +141,5 @@ string Channel::reventsToString() const
     oss << "NVAL ";
 
   return oss.str().c_str();
-}
-}
 }
 

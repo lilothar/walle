@@ -70,7 +70,7 @@ int main(int argc, char* argv[])
   }
   EventLoop loop;
   AddrInet Addr("0.0.0.0:8000");
-  HttpServer server(&loop, Addr, "dylin");
+  HttpServer server(&loop, Addr, "walle");
   server.setHttpCallback(onRequest);
   server.setThreadNum(numThreads);
   server.start();

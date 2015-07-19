@@ -1,8 +1,8 @@
 add_executable(test_client_close test_client_close.cpp)
 target_link_libraries(test_client_close wallenet wallesys)
 
-#add_executable(test_loop test_loop.cpp)
-#target_link_libraries(test_loop wallenet wallesys)
+add_executable(echo_client echo_client.cpp)
+target_link_libraries(echo_client wallenet wallesys)
 
-#add_executable(test_signal test_signal.cpp)
-#target_link_libraries(test_signal wallenet wallesys)
+add_executable(echo_server echo_server.cpp)
+target_link_libraries(echo_server wallenet wallesys)

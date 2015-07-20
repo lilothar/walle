@@ -3,7 +3,7 @@
 #include <walle/net/Eventloop.h>
 #include <walle/net/Timer.h>
 #include <walle/net/TimerId.h>
-
+#include <stdint.h>
 #include <boost/bind.hpp>
 
 #include <sys/timerfd.h>
@@ -164,7 +164,7 @@ std::vector<Timer::Entry> Timer::getExpired(Time now)
 {
   assert(_tasks.size() == _activeTasks.size());
   std::vector<Entry> expired;
-  Entry sentry(now, reinterpret_cast<TimerTask*>(UINTPTR_MAX));
+  Entry sentry(now, reinterpret_cast<TimerTask*>(0xffffffffffffffff));
   TaskList::iterator end = _tasks.lower_bound(sentry);
   assert(end == _tasks.end() || now < end->first);
   std::copy(_tasks.begin(), end, back_inserter(expired));

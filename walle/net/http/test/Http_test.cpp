@@ -69,7 +69,7 @@ int main(int argc, char* argv[])
     numThreads = atoi(argv[1]);
   }
   EventLoop loop;
-  AddrInet Addr("0.0.0.0:8000");
+  AddrInet Addr("localhost:8080");
   HttpServer server(&loop, Addr, "walle");
   server.setHttpCallback(onRequest);
   server.setThreadNum(numThreads);

@@ -22,6 +22,7 @@ int main()
 	req.setLocaltion("/");
 	req.setBody("hello");
 	req.addHeader("Content-Length","4");
+	req.addArg("name","walle");
 	httpclient.setResponseCallback(boost::bind(mycb,_1,_2));
 	httpclient.start();
 	while(1) {

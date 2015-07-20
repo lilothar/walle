@@ -51,9 +51,13 @@ void onRequest(const HttpRequest& req, HttpResponse* resp)
     resp->setContentType("text/plain");
     resp->addHeader("Server", "dylin");
     resp->setBody("hello, world!\n");
-  }
-  else
-  {
+  } else if(req.path() == "/create_seed") {
+  /*
+		todo queue to a task list;
+  */
+	resp->setStatusCode(HttpResponse::k200Ok);
+    resp->setStatusMessage("OK");
+  }else{
     resp->setStatusCode(HttpResponse::k404NotFound);
     resp->setStatusMessage("Not Found");
     resp->setCloseConnection(true);

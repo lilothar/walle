@@ -7,7 +7,8 @@ HttpClientRequest::HttpClientRequest():
 	_version("HTTP/1.1"),
 	_port(80)
 {
-
+	_headers.clear();
+	_args.clear();
 }
 HttpClientRequest::~HttpClientRequest()
 {
@@ -162,6 +163,7 @@ bool  HttpClientRequest::toString(string &request)
 			request.append(itr->first);
 			request.append(1,'=');
 			request.append(itr->second);
+			itr++;
 		}//end while 	
 	}//end if
 
@@ -169,8 +171,7 @@ bool  HttpClientRequest::toString(string &request)
 	request.append(_version);
 	request.append("\r\n");
 
-	if(!_args.empty()) {
-		DictItr begin = _headers.begin();
+	if(!_headers.empty()) {
 		DictItr itr = _headers.begin();
 		while (itr != _headers.end() )  {
 			
@@ -178,6 +179,7 @@ bool  HttpClientRequest::toString(string &request)
 			request.append(": ");
 			request.append(itr->second);
 			request.append("\r\n");
+			itr++;
 		}//end while 	
 	}//end if
 	request.append("\r\n");

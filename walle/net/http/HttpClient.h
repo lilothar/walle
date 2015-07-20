@@ -18,7 +18,7 @@ class HttpClient{
     public:
        HttpClient(EventLoop *loop);
        ~HttpClient();
-       HttpClientRequest* getRequest();
+       HttpClientRequest& getRequest();
 
        void start();
        void stop();

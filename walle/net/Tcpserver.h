@@ -1,5 +1,5 @@
 #ifndef WALLE_TCPSERVER_H_
-#define WALLE_TCPSErVER_H_
+#define WALLE_TCPSERVER_H_
 
 #include <walle/sys/Atomic.h>
 #include <walle/net/TcpConnection.h>

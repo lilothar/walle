@@ -5,8 +5,11 @@
 #include <stdio.h>
 #include <ctype.h>
 #include <walle/sys/wallesys.h>
+#include <walle/net/Buffer.h>
 #include <cstring>
 using namespace walle::sys;
+using namespace walle::net;
+
 namespace walle{
 namespace http {
 class HttpRequest 
@@ -23,7 +26,8 @@ class HttpRequest
 
   HttpRequest()
     : _method(kInvalid),
-      _version(kUnknown)
+      _version(kUnknown),
+      _cachelen(0)
   {
   }
 
@@ -193,8 +197,64 @@ class HttpRequest
     that._receiveTime = tmp;
     _headers.swap(that._headers);
   }
+  const string getbody() const
+  {
+	return _body;
+  }
+  void  setBody(Buffer *buf)
+  {
+	_body.append(buf->peek(),buf->readableBytes());
+  }
+
+  size_t getCachelen()
+  {
+		return _cachelen;
+  }
+  void setCachelen(size_t len) 
+  {
+	_cachelen = len;
+  }
+  string toString() const
+  {
+
+	string r;
+	r.append("debug");
+	r.append(methodString());
+	r.append("\r\n");
+	r.append(_path);
+	r.append("\r\n");
+	r.append(_query);
+	r.append("\r\n");
+	r.append(_receiveTime.toDateTime());
+	r.append("\r\n");
+	r.append("headers...\r\n");
+	 std::map<string, string>::const_iterator itr = _headers.begin();
+	for( ;itr!=_headers.end(); itr++) {
+		r.append(itr->first);
+		r.append(" : ");
+		r.append(itr->second);
+		r.append("\r\n");
+	}
+
+	itr = _args.begin();
+	r.append("args...\r\n");
+	for( ;itr!=_args.end(); itr++) {
+		r.append(itr->first);
+		r.append(" = ");
+		r.append(itr->second);
+		r.append("\r\n");
+	}
+	
+	r.append("body...\r\n");
+	LOG_ERROR<<"sdsds"<<_body;
+	r.append(_body);
+	r.append("\r\n");
+	return r;
+	
+  }
 
  private:
+  string                   _body;
   Method                   _method;
   Version                  _version;
   string                   _path;
@@ -202,6 +262,7 @@ class HttpRequest
   Time                     _receiveTime;
   std::map<string, string> _headers;
   std::map<string, string> _args;
+  size_t                   _cachelen;
 };
 
 }

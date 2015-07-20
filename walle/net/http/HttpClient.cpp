@@ -17,7 +17,10 @@ namespace http{
 		_client = NULL;
 	}
  }
-       HttpClientRequest* getRequest();
+HttpClientRequest& HttpClient::getRequest()
+{
+	return _request;
+}
 
 void HttpClient::start()
 {
@@ -26,11 +29,13 @@ void HttpClient::start()
 	_client = new TcpClient(_loop,serverAddr,"HttpClient");
 	_client->setConnectionCallback(boost::bind(&HttpClient::onConnection,this,_1));
 	_client->setMessageCallback(boost::bind(&HttpClient::onMessage,this,_1,_2,_3));
-	_client->setConnectionCallback(boost::bind(&HttpClient::onWriteComplete,this,_1));
+	_client->setWriteCompleteCallback(boost::bind(&HttpClient::onWriteComplete,this,_1));
 	_client->connect();
+	LOG_ERROR<<"HttpClient::start";
 }
 void HttpClient::stop()
 {
+	LOG_ERROR<<"HttpClient::stop";
 	if(_client) {
 		_client->disconnect();
 		delete _client;
@@ -40,12 +45,14 @@ void HttpClient::stop()
 	   
 void HttpClient::setResponseCallback(ResponseCb cb)
 {
+	LOG_ERROR<<"HttpClient::setResponseCallback";
 	_cb = cb;
 }
 
 
 void HttpClient::onConnection(const TcpConnectionPtr& conn)
 {
+	LOG_ERROR<<"HttpClient::onConnection";
 	if(!conn->connected()) {
 		_response.setValid(false);
 		stop();
@@ -55,6 +62,7 @@ void HttpClient::onConnection(const TcpConnectionPtr& conn)
 	} else {
 		string requeststr;
 		_request.toString(requeststr);
+		LOG_ERROR<<requeststr;
 		conn->send(requeststr);
 	
 	}
@@ -62,10 +70,12 @@ void HttpClient::onConnection(const TcpConnectionPtr& conn)
 void HttpClient::onWriteComplete(const TcpConnectionPtr& conn)
 {
 	LOG_DEBUG<<"send request complete wait for response";
+	LOG_ERROR<<"HttpClient::onWriteComplete";
 }
 
 void HttpClient::onMessage(const TcpConnectionPtr& conn, Buffer* buf, Time time)
 {
+	LOG_ERROR<<"HttpClient::onMessage";	
 	const char* str = buf->peek();
 	size_t readablesize = buf->readableBytes();
 	size_t parsedsize = _response.parseResponse(str,readablesize);

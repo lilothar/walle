@@ -28,6 +28,7 @@ void onRequest(const HttpRequest& req, HttpResponse* resp)
 
   if (req.path() == "/")
   {
+  	std::cout<<req.toString()<<std::endl;
     resp->setStatusCode(HttpResponse::k200Ok);
     resp->setStatusMessage("OK");
     resp->setContentType("text/html");

@@ -64,63 +64,73 @@ context)
   return succeed;
 }
 
-// FIXME: move to HttpContext class
-// return false if any error
 bool parseRequest(Buffer* buf, HttpContext* context, Time receiveTime)
 {
   bool ok = true;
   bool hasMore = true;
-  while (hasMore)
-  {
-    if (context->expectRequestLine())
-    {
+  while (hasMore) {
+    if (context->expectRequestLine()) {
       const char* crlf = buf->findCRLF();
-      if (crlf)
-      {
+      if (crlf) {
         ok = processRequestLine(buf->peek(), crlf, context);
-        if (ok)
-        {
+        if (ok) {
           context->request().setReceiveTime(receiveTime);
           buf->retrieveUntil(crlf + 2);
           context->receiveRequestLine();
-        }
-        else
-        {
+        } else {
           hasMore = false;
         }
-      }
-      else
-      {
+      } else {
         hasMore = false;
       }
-    }
-    else if (context->expectHeaders())
-    {
+    } else if (context->expectHeaders()) {
       const char* crlf = buf->findCRLF();
-      if (crlf)
-      {
+      if (crlf) {
         const char* colon = std::find(buf->peek(), crlf, ':');
-        if (colon != crlf)
-        {
+        if (colon != crlf) {
           context->request().addHeader(buf->peek(), colon, crlf);
-        }
-        else
-        {
+        }  else {
           // empty line, end of header
           context->receiveHeaders();
           hasMore = !context->gotAll();
         }
         buf->retrieveUntil(crlf + 2);
-      }
-      else
-      {
+      } else {
         hasMore = false;
       }
+    } else if (context->expectBody()) {
+    	HttpRequest& req = context->request();
+		size_t cachelen = req.getCachelen();
+		
+    	if(cachelen == 0) {
+    		string lenstr = req.getHeader("Content-Length");
+			if(lenstr.empty()) {
+				context->receiveBody();
+				hasMore = false;
+				continue;
+			}
+			int64_t len = StringUtil::atoi(lenstr.c_str(),lenstr.length());
+			if(len == 0 ) {
+				context->receiveBody();
+				hasMore = false;
+				continue;
+			}
+			cachelen = (size_t)len;
+			req.setCachelen(cachelen);
+			
+    	}
+	   size_t bufflen = buf->readableBytes();
+	   if(bufflen >= cachelen) {
+	   		req.setBody(buf);
+			context->receiveBody();
+			hasMore = false;
+			continue;
+	   } else {
+			hasMore = false;
+	   }
+	  
     }
-    else if (context->expectBody())
-    {
-      // FIXME:
-    }
+    	
   }
   return ok;
 }

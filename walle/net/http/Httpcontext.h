@@ -39,7 +39,11 @@ class HttpContext
   { _state = kExpectHeaders; }
 
   void receiveHeaders()
-  { _state = kGotAll; }  // FIXME
+  { _state = kExpectBody; }
+  void receiveBody()
+  {
+	_state =kGotAll;
+  }
 
   void reset()
   {

@@ -24,6 +24,8 @@ namespace sys {
 
         bool load(const string &filename);
 
+        bool loadFromArray(const char* content, size_t len);
+
         string getString(const string &section, const string& key, const string 
         &d ="");
 

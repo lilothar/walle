@@ -1,6 +1,7 @@
 #include <walle/sys/Config.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <algorithm>
 
 
 
@@ -97,8 +98,70 @@ namespace sys {
 		result = str+1;
         return result;
     }
-	
-	 bool Config::load(const string &filename)
+	bool Config::loadFromArray(const char* content, size_t len)
+	{
+		if(!content || len < 1) {
+			return false;
+		}
+		int 			line = 0;
+		const char *end = content + len;
+		const char *start = content;
+		const char *data = std::find(start,end, '\n');
+		string          key;
+		string          value;
+		bool  ret;
+		KeyValueMap *m = NULL;
+
+		while (data != end) {
+			line ++;
+			string sName = isSectionName((char*)data);
+			
+			if (!sName.empty()) {
+				SectionMapItr it = _configMap.find(sName);
+				if (it == _configMap.end()) {
+						m = new KeyValueMap();
+						_configMap.insert(SectionMap::value_type(sName, m));
+				} else {
+						m = it->second;
+				}
+				start = data + 1;
+				data = std::find(start,end, '\n');
+				continue;
+			}
+		
+			ret = parseValue((char*)data, key, value);
+			if (ret == false) {
+					
+					return false;
+			}
+
+			if (key.empty()) {
+				start = data + 1;
+				data = std::find(start,end, '\n');
+					continue;
+			}
+			
+			if (m == NULL) {
+				return false;
+			}			 
+
+			KeyValueMapItr it1 = m->find(key);
+			if (it1 != m->end()) {
+					it1->second += '\0';
+					it1->second += value;
+			} else {
+					m->insert(KeyValueMap::value_type(key, value));
+					key.clear();
+					value.clear();
+			}
+			start = data + 1;
+			data = std::find(start,end, '\n');
+		}
+		return true;
+		
+
+	}
+	bool Config::load(const string &filename)
 	{
 			FILE		   *fp;
 			char			data[4096];

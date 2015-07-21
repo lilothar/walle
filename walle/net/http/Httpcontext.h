@@ -1,5 +1,5 @@
-#ifndef DYLIN_HTTPCONTEXT_H_
-#define DYLIN_HTTPCONTEXT_H_
+#ifndef WALLE_HTTPCONTEXT_H_
+#define WALLE_HTTPCONTEXT_H_
 #include <walle/net/http/Httprequest.h>
 
 namespace walle {

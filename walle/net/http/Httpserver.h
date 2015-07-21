@@ -1,5 +1,5 @@
-#ifndef DYLIN_HTTPSERVER_H_
-#define DYLIN_HTTPSERVER_H_
+#ifndef WALLE_HTTPSERVER_H_
+#define WALLE_HTTPSERVER_H_
 
 #include <walle/net/Tcpserver.h>
 #include <walle/net/Addrinet.h>

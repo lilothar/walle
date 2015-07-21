@@ -32,7 +32,7 @@ void onRequest(const HttpRequest& req, HttpResponse* resp)
     resp->setStatusCode(HttpResponse::k200Ok);
     resp->setStatusMessage("OK");
     resp->setContentType("text/html");
-    resp->addHeader("Server", "dylin");
+    resp->addHeader("Server", "walle");
     string now = Time::now().toDateTime();
     resp->setBody("<html><head><title>This is title</title></head>"
         "<body><h1>Hello</h1>Now is " + now +
@@ -50,7 +50,7 @@ void onRequest(const HttpRequest& req, HttpResponse* resp)
     resp->setStatusCode(HttpResponse::k200Ok);
     resp->setStatusMessage("OK");
     resp->setContentType("text/plain");
-    resp->addHeader("Server", "dylin");
+    resp->addHeader("Server", "walle");
     resp->setBody("hello, world!\n");
   } else if(req.path() == "/create_seed") {
   /*

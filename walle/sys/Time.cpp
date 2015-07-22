@@ -20,23 +20,30 @@ Time Time:: dateString(const string & datestr, const char* spliter)
 		return Time(0); 
 	}
 	memset(&ptm, 0, sizeof(ptm));
-	vector<int64_t> dateint;
-	StringUtil::stringSplitInt(datestr, spliter, dateint);
+	vector<string> dateint;
+	StringUtil::stringSplit(datestr, spliter, dateint);
 	if(dateint.size() < 6) {
 		return Time(0);
 	}
-	ptm.tm_year = dateint[0]- 1900;
-    ptm.tm_mon = dateint[1] - 1;
-    ptm.tm_mday = dateint[2];
-    ptm.tm_hour = dateint[3];
-    ptm.tm_min = dateint[4];
-    ptm.tm_sec = dateint[5];
+	ptm.tm_year = StringUtil::atoi(dateint[0])- 1900;
+    ptm.tm_mon = StringUtil::atoi(dateint[1]) - 1;
+    ptm.tm_mday = StringUtil::atoi(dateint[2]);
+    ptm.tm_hour = StringUtil::atoi(dateint[3]);
+    ptm.tm_min = StringUtil::atoi(dateint[4]);
+    ptm.tm_sec = StringUtil::atoi(dateint[5]);
 	int64_t t = mktime(&ptm);
 	int64_t t2 = time(NULL);
 	t2 *= 1;
 	int64_t usec = t * kMicroSecondsPerSecond;
 	if(dateint.size() == 7) {
-		usec += dateint[6];
+		int64_t tail = StringUtil::atoi(dateint[6]);
+		if(dateint[6].length() < 6) {
+			int p = 6 - dateint[6].length();
+			for(int i = 0; i < p; i++) {
+				tail *= 10;
+			}
+		}
+		usec += tail;
 	}
 	return Time(usec);		
 }

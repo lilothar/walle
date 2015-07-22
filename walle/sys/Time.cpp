@@ -35,14 +35,12 @@ Time Time:: dateString(const string & datestr, const char* spliter)
 	int64_t t2 = time(NULL);
 	t2 *= 1;
 	int64_t usec = t * kMicroSecondsPerSecond;
-	if(dateint.size() == 7) {
-		int64_t tail = StringUtil::atoi(dateint[6]);
+	if(dateint.size() == 7) {	
 		if(dateint[6].length() < 6) {
 			int p = 6 - dateint[6].length();
-			for(int i = 0; i < p; i++) {
-				tail *= 10;
-			}
+			dateint[6].append(p,'0');
 		}
+		int64_t tail = StringUtil::atoi(dateint[6]);
 		usec += tail;
 	}
 	return Time(usec);		

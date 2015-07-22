@@ -14,3 +14,6 @@ target_link_libraries(test_md5 wallesys)
 
 add_executable(test_random test_random.cpp)
 target_link_libraries(test_random wallesys)
+
+add_executable(test_string_to_sec test_string_to_sec.cpp)
+target_link_libraries(test_string_to_sec wallesys)

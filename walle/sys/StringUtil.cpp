@@ -12,6 +12,12 @@ const char HEX[16] = {
 	'8', '9', 'a', 'b',
 	'c', 'd', 'e', 'f'
 };
+
+int64_t StringUtil::atoi(const string &str)
+{
+	return atoi(str.c_str(), str.length());
+}
+
 int64_t StringUtil::atoi(const char *buff, size_t len)
 {
 	const char *str = buff;
@@ -39,6 +45,12 @@ int64_t StringUtil::atoi(const char *buff, size_t len)
   }
   return num * sign;
 }
+
+int64_t  StringUtil::atoix(const string &str)
+{
+	return atoix(str.c_str(), str.length());
+}
+
 int64_t StringUtil::atoix(const char *buff, size_t len)
 {
 	const char *str = buff;
@@ -94,6 +106,11 @@ int64_t StringUtil::atoix(const char *buff, size_t len)
 	 }
 	 return static_cast<int64_t>(num);
 }
+int64_t StringUtil::atoih(const string & str)
+{
+	return atoih(str.c_str(), str.length());
+}
+
 int64_t StringUtil::atoih(const char *buff, size_t len)
 {
 	const char *str = buff;
@@ -119,6 +136,11 @@ int64_t StringUtil::atoih(const char *buff, size_t len)
   	}
   return num;
 }
+double StringUtil::atof(const string& str)
+{
+	return atof(str.c_str(),str.length());
+}
+
 double StringUtil::atof(const char *buff, size_t len)
 {
 	const char *ptr = buff;
@@ -234,7 +256,7 @@ char *  StringUtil::trim(char *str, const char *what, int mode)
 	unsigned char * ret = (unsigned char *) str;
 	//pre
 	unsigned char *p;
-	if(mode == 1) {
+	if(mode&1) {
 		p = ret;
 		while (*p) {
 			if(!*p & mask[*p]) {
@@ -246,7 +268,7 @@ char *  StringUtil::trim(char *str, const char *what, int mode)
 
 	}
 	// tail
-	if(mode == 2) {
+	if(mode&2) {
 		p = ret + strlen((const char*)ret);
 		while (p >= ret) {
 			if(!*p & mask[*p]) {
@@ -262,6 +284,116 @@ char *  StringUtil::trim(char *str, const char *what, int mode)
 	return (char*)ret;
 
 }
+
+size_t StringUtil::stringSplit(const string& str, char delim, 
+					 vector<string>& elems)
+{
+
+  elems.clear();
+  string::const_iterator it = str.begin();
+  string::const_iterator pv = it;
+  while (it != str.end()) {
+    if (*it == delim) {
+      string col(pv, it);
+      elems.push_back(col);
+      pv = it + 1;
+    }
+    ++it;
+  }
+  string col(pv, it);
+  elems.push_back(col);
+  return elems.size();
+
+}
+
+size_t StringUtil::stringSplit(const string& str, const string& delims,
+			 vector<string>& elems)
+{
+  elems.clear();
+  string::const_iterator it = str.begin();
+  string::const_iterator pv = it;
+  while (it != str.end()) {
+    while (delims.find(*it, 0) != string::npos) {
+      string col(pv, it);
+      elems.push_back(col);
+      pv = it + 1;
+      break;
+    }
+    ++it;
+  }
+  std::string col(pv, it);
+  elems.push_back(col);
+  return elems.size();
+}
+size_t StringUtil::stringSplit(const char* str, size_t len, const string& delims,
+			 vector<string>& elems)
+{
+	string s(str, len);
+	return stringSplit(s,delims,elems);
+}
+
+size_t StringUtil::stringSplit(const char* str, size_t len, char delim, 
+					vector<string>& elems)
+{
+	string s(str, len);
+	return stringSplit(s,delim,elems);
+}
+
+size_t StringUtil::stringSplitInt(const string& str, char delim, 
+					 vector<int64_t>& elems)
+{
+ 	elems.clear();
+  	string::const_iterator it = str.begin();
+  	string::const_iterator pv = it;
+  	while (it != str.end()) {
+    	if (*it == delim) {
+      		int64_t col = atoi(string(pv,it));
+      		elems.push_back(col);
+     	 	pv = it + 1;
+    	}
+    	++it;
+  	}
+  	int64_t col = atoi(string(pv,it));
+ 	elems.push_back(col);
+  	return elems.size();
+}
+ size_t StringUtil::stringSplitInt(const char* buff, size_t len, char delim, 
+					 vector<int64_t>& elems)
+ {
+	string tmp(buff, len);
+	return stringSplitInt(tmp, delim, elems);	
+
+ }
+ size_t StringUtil::stringSplitInt(const char* buff, size_t len, 
+					 const string& delims, 
+					 vector<int64_t>& elems)
+ {
+	string tmp(buff, len);
+	return stringSplitInt(tmp, delims, elems);		
+ }
+size_t StringUtil::stringSplitInt(const string &str, 
+					 const string& delims, 
+					 vector<int64_t>& elems)
+ {
+	elems.clear();
+  	string::const_iterator it = str.begin();
+  	string::const_iterator pv = it;
+  	while (it != str.end()) {
+    	while (delims.find(*it, 0) != string::npos) {
+      		int64_t col = atoi(string(pv,it));
+      		elems.push_back(col);
+      		pv = it + 1;
+      		break;
+    }
+    ++it;
+  }
+  int64_t col = atoi(string(pv,it));
+  elems.push_back(col);
+  return elems.size();
+ }
+
+
+
 int StringUtil:: hashcode(const char *str, size_t len)
 {
 	int h = 0;

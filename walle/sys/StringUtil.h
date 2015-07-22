@@ -3,17 +3,24 @@
 #include <stdint.h>
 #include <stddef.h>
 #include <string>
+#include <vector>
 #include <algorithm>
 
 using std::string;
+using std::vector;
+    
 namespace walle{
 namespace sys {
 class StringUtil{
 public:
+   static int64_t atoi(const string &str);
    static int64_t atoi(const char *buff, size_t len);
+   static int64_t  atoix(const string &str);
    static int64_t atoix(const char *buff, size_t len);
    static int64_t atoih(const char *buff, size_t len);
+   static int64_t atoih(const string &str);
    static double atof(const char *buff, size_t len);
+   static double atof(const string &str);
    static char *  toUpper(char* buff, size_t len);
    static char *  toLower(char* buff, size_t len);
    static char *  trim(char *str, const char *what = " ", int mode = 3);
@@ -22,6 +29,26 @@ public:
 
    static string  hexEncode(const unsigned char * buff, size_t len);
    static string    hexDecode(const unsigned char* buff, size_t len);
+
+   static  size_t stringSplit(const string& str, char delim, 
+                        vector<string>& elems);
+   static  size_t stringSplit(const char* str, size_t len, char delim, 
+                        vector<string>& elems);
+
+   static size_t stringSplit(const string& str, const string& delims,
+                vector<string>& elems);
+   static size_t stringSplit(const char* str, size_t len, const string& delims,
+                vector<string>& elems);
+   static size_t stringSplitInt(const string& str, char delim, 
+                        vector<int64_t>& elems);
+    static size_t stringSplitInt(const char* buff, size_t len, char delim, 
+                        vector<int64_t>& elems);
+    static size_t stringSplitInt(const char* buff, size_t len, 
+                        const string& delims, 
+                        vector<int64_t>& elems);
+    static size_t stringSplitInt(const string &str, 
+                        const string& delims, 
+                        vector<int64_t>& elems);
    
    template <typename T>
    static string  formateInteger(const T &value)

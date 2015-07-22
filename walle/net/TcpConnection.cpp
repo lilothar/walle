@@ -265,6 +265,7 @@ void TcpConnection::connectDestroyed()
   if (_state == kConnected)
   {
     setState(kDisconnected);
+	_socket->shutdown();
     _channel->disableAll();
 
     _connectionCallback(shared_from_this());

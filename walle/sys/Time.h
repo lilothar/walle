@@ -3,6 +3,10 @@
 #include <sys/time.h>
 #include <stdint.h>
 #include <string>
+#include <string>
+#include <vector>
+using std::vector;
+using std::string;
 
 namespace walle{
 namespace sys {
@@ -23,6 +27,8 @@ public:
 
     static Time microSeconds(int64_t micro);
 
+    static Time dateString(const string & datestr,
+        const char* spliter = "- :.");
 
     int64_t toSeconds() const;
 
@@ -34,8 +40,9 @@ public:
     double toMilliSecondsDouble() const;
     double toMicroSecondsDouble() const;
 
-
+    // if 3 or 6 bit on default on
     std::string toDateTime() const;
+  
 
     std::string toDuration() const;
     bool valid() {return _usec !=0;}

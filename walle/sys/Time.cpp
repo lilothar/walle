@@ -1,7 +1,9 @@
 #include <walle/sys/Time.h>
 #include <assert.h>
 #include <sstream>
+#include <string.h>
 #include <iomanip>
+#include <walle/sys/StringUtil.h>
 
 namespace walle{
 namespace sys {
@@ -9,6 +11,34 @@ namespace sys {
 Time::Time():
     _usec(0)
 {
+}
+Time Time:: dateString(const string & datestr, const char* spliter)
+{
+	struct tm ptm;
+	
+	if(datestr.empty()) {
+		return Time(0); 
+	}
+	memset(&ptm, 0, sizeof(ptm));
+	vector<int64_t> dateint;
+	StringUtil::stringSplitInt(datestr, spliter, dateint);
+	if(dateint.size() < 6) {
+		return Time(0);
+	}
+	ptm.tm_year = dateint[0]- 1900;
+    ptm.tm_mon = dateint[1] - 1;
+    ptm.tm_mday = dateint[2];
+    ptm.tm_hour = dateint[3];
+    ptm.tm_min = dateint[4];
+    ptm.tm_sec = dateint[5];
+	int64_t t = mktime(&ptm);
+	int64_t t2 = time(NULL);
+	t2 *= 1;
+	int64_t usec = t * kMicroSecondsPerSecond;
+	if(dateint.size() == 7) {
+		usec += dateint[6];
+	}
+	return Time(usec);		
 }
 
 Time Time::now(Clock clock)
@@ -32,6 +62,7 @@ Time Time::now(Clock clock)
         return Time(ts.tv_sec * int64_t(1000000) + ts.tv_nsec / int64_t(1000));
     }
 }
+
 
 Time Time::seconds(int64_t t)
 {
@@ -102,8 +133,10 @@ std::string Time::toDateTime() const
     std::ostringstream os;
     os << buf << ".";
     os.fill('0');
-    os.width(3);
-    os << static_cast<long>(_usec % 1000000 / 1000);
+	
+	os.width(6);
+	
+    os << static_cast<long>(_usec % 1000000);
     return os.str();
 }
 

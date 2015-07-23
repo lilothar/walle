@@ -15,6 +15,7 @@ set(SYS_SRC
 	Histogram
 	Url
 	MD5
+	CountDown
 	)
 add_library(wallesys ${SYS_SRC})
 target_link_libraries(wallesys pthread rt)

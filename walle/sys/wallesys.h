@@ -51,5 +51,8 @@
 #include <walle/sys/MD5.h>
 #include <walle/sys/Random.h>
 #include <walle/sys/Weakcall.h>
+#include <walle/sys/CountDown.h>
+#include <walle/sys/Cmdline.h>
+
 
 #endif

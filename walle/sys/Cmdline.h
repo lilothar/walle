@@ -704,7 +704,7 @@ private:
                       const std::string &pdesc)
       : _nam(longname), _snam(shortname), _need(pneed), _has(false)
       , _def(pdef), _actual(pdef) {
-      this->desc=full_description(pdesc);
+      this->_desc=full_description(pdesc);
     }
     ~option_with_value(){}
 
@@ -781,13 +781,13 @@ private:
   template <class T, class F>
   class option_with_value_with_reader : public option_with_value<T> {
   public:
-    option_with_value_with_reader(const std::string &name,
-                                  char short_name,
-                                  bool need,
-                                  const T def,
-                                  const std::string &desc,
+    option_with_value_with_reader(const std::string &pname,
+                                  char shortname,
+                                  bool pneed,
+                                  const T pdef,
+                                  const std::string &pdesc,
                                   F rder)
-      : option_with_value<T>(name, short_name, need, def, desc), reader(rder){
+      : option_with_value<T>(pname, shortname, pneed, pdef, pdesc), reader(rder){
     }
 
   private:

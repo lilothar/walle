@@ -17,7 +17,7 @@ int main(int argc, char**argv)
 	if(p.exist("gzip")) {
 		cout<<"compress: gzip enabled"<<endl;
 	} else {
-		cout<<"compress: gzip disabled"<<endl;
+		cout<<"compress: gzip disabled"<<endl;	
 	}
 	return 0;
 }

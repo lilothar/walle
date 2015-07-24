@@ -2,7 +2,8 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <algorithm>
-
+#include <walle/sys/Stream.h>
+#include <walle/sys/Logging.h>
 
 
 using namespace std;
@@ -100,66 +101,57 @@ namespace sys {
     }
 	bool Config::loadFromArray(const char* content, size_t len)
 	{
-		if(!content || len < 1) {
-			return false;
-		}
-		int 			line = 0;
-		const char *end = content + len;
-		const char *start = content;
-		const char *data = std::find(start,end, '\n');
-		string          key;
-		string          value;
-		bool  ret;
-		KeyValueMap *m = NULL;
+			if( !content || len < 1) {
+				LOG_ERROR<<"no config content for input";
+				return false;
+			}
+			char			data[4096];
+			int 			line = 0;
+			bool            ret;
+			string          key;
+			string          value;
+			size_t          readsize;
+			BytesStream     s(content, len);
 
-		while (data != end) {
-			line ++;
-			string sName = isSectionName((char*)data);
-			
-			if (!sName.empty()) {
-				SectionMapItr it = _configMap.find(sName);
-				if (it == _configMap.end()) {
+			KeyValueMap *m = NULL;
+			while ((readsize = s.readLine(data, (size_t)4096)) >= 1) {
+				data[readsize] = '\0';
+				line ++;
+				string sName = isSectionName(data);
+				if (!sName.empty()) {
+					SectionMapItr it = _configMap.find(sName);
+					if (it == _configMap.end()) {
 						m = new KeyValueMap();
 						_configMap.insert(SectionMap::value_type(sName, m));
-				} else {
+					} else {
 						m = it->second;
+					}
+					continue;
 				}
-				start = data + 1;
-				data = std::find(start,end, '\n');
-				continue;
-			}
-		
-			ret = parseValue((char*)data, key, value);
-			if (ret == false) {
+				ret = parseValue(data, key, value);
+				if (ret == false) {
 					
 					return false;
-			}
-
-			if (key.empty()) {
-				start = data + 1;
-				data = std::find(start,end, '\n');
+				}
+				if (key.empty()) {
 					continue;
-			}
-			
-			if (m == NULL) {
-				return false;
-			}			 
+				}
+				if (m == NULL) {
+				
+					return false;
+				}			 
 
-			KeyValueMapItr it1 = m->find(key);
-			if (it1 != m->end()) {
+				KeyValueMapItr it1 = m->find(key);
+				if (it1 != m->end()) {
 					it1->second += '\0';
 					it1->second += value;
-			} else {
+				} else {
 					m->insert(KeyValueMap::value_type(key, value));
 					key.clear();
 					value.clear();
+				}
 			}
-			start = data + 1;
-			data = std::find(start,end, '\n');
-		}
-		return true;
-		
-
+			return true;
 	}
 	bool Config::load(const string &filename)
 	{

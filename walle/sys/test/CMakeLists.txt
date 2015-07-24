@@ -21,3 +21,6 @@ target_link_libraries(test_string_to_sec wallesys)
 
 add_executable(test_cmdline test_cmdline.cpp)
 target_link_libraries(test_cmdline wallesys)
+
+add_executable(test_config_mem test_config_mem.cpp)
+target_link_libraries(test_config_mem wallesys)

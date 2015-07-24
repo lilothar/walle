@@ -223,7 +223,7 @@ void TcpConnection::forceCloseWithDelay(int64_t seconds)
     setState(kDisconnecting);
 
     _loop->runAfter(
-        seconds,
+        seconds*1000000,
         makeWeakCallback(shared_from_this(),
                          &TcpConnection::forceClose)); 
   }
@@ -237,6 +237,7 @@ void TcpConnection::forceCloseInLoop()
   if (_state == kConnected || _state == kDisconnecting)
   {
     // as if we received 0 byte in handleRead();
+    _socket->shutdown();
     handleClose();
   }
 }

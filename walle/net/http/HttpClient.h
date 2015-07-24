@@ -13,26 +13,34 @@ using namespace walle::sys;
 namespace walle {
 namespace http {
 
- typedef boost::function<void(HttpClientRequest*,HttpClientResponse*)> ResponseCb;   
+
+class HttpClient;
+
+typedef boost::function<void(HttpClient*)> HttpClientCallback; 
+  
+
 class HttpClient{
     public:
        HttpClient(EventLoop *loop);
        ~HttpClient();
        HttpClientRequest& getRequest();
-
+       HttpClientResponse& getResponse();
        void start();
        void stop();
-       void setResponseCallback(ResponseCb cb);
+       void setResponseCallback(HttpClientCallback cb);
+       void setHttpCloseCallback(HttpClientCallback cb);
     private:
         void onConnection(const TcpConnectionPtr& conn);
         void onWriteComplete(const TcpConnectionPtr& conn);
         void onMessage(const TcpConnectionPtr& conn, Buffer* buf, Time time);
    
-        EventLoop         *_loop;
-        TcpClient         *_client;
-        HttpClientRequest  _request;
-        HttpClientResponse _response;
-        ResponseCb         _cb;
+        EventLoop              *_loop;
+        TcpClient              *_client;
+        HttpClientRequest       _request;
+        HttpClientResponse      _response;
+        HttpClientCallback      _onResponse;
+        HttpClientCallback      _onClose;
+
 
 
 };

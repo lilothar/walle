@@ -12,7 +12,6 @@ namespace http{
  HttpClient::~HttpClient()
  {
 	if(_client) {
-		_client->disconnect();
 		delete _client;
 		_client = NULL;
 	}
@@ -20,6 +19,11 @@ namespace http{
 HttpClientRequest& HttpClient::getRequest()
 {
 	return _request;
+}
+
+HttpClientResponse& HttpClient::getResponse()
+{
+	return _response;
 }
 
 void HttpClient::start()
@@ -38,26 +42,26 @@ void HttpClient::stop()
 	LOG_ERROR<<"HttpClient::stop";
 	if(_client) {
 		_client->disconnect();
-		delete _client;
-		_client = NULL;	
 	}
 }
 	   
-void HttpClient::setResponseCallback(ResponseCb cb)
+void HttpClient::setResponseCallback(HttpClientCallback cb)
 {
 	LOG_ERROR<<"HttpClient::setResponseCallback";
-	_cb = cb;
+	_onResponse = cb;
 }
 
+void HttpClient::setHttpCloseCallback(HttpClientCallback cb)
+{
+	_onClose = cb;
+}
 
 void HttpClient::onConnection(const TcpConnectionPtr& conn)
 {
 	LOG_ERROR<<"HttpClient::onConnection";
 	if(!conn->connected()) {
-		_response.setValid(false);
-		stop();
-		if(_cb) {
-			_cb(&_request, &_response);
+		if(_onClose) {
+			_onClose(this);
 		}
 	} else {
 		string requeststr;
@@ -70,7 +74,6 @@ void HttpClient::onConnection(const TcpConnectionPtr& conn)
 void HttpClient::onWriteComplete(const TcpConnectionPtr& conn)
 {
 	LOG_DEBUG<<"send request complete wait for response";
-	LOG_ERROR<<"HttpClient::onWriteComplete";
 }
 
 void HttpClient::onMessage(const TcpConnectionPtr& conn, Buffer* buf, Time time)
@@ -84,8 +87,8 @@ void HttpClient::onMessage(const TcpConnectionPtr& conn, Buffer* buf, Time time)
 		buf->retrieve(parsedsize);
 	}
 	if(_response.getAll()|| !_response.isvalid()) {
-		if(_cb) {
-			_cb(&_request,&_response);
+		if(_onResponse) {
+			_onResponse(this);
 		}
 	}
 }

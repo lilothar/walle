@@ -15,6 +15,7 @@ set(NETSRC
 	Tcpserver.cpp
 	Timer.cpp
 	Timertask.cpp
+	Service.cpp
 	)
 	add_library(wallenet ${NETSRC})
 	target_link_libraries(wallenet wallesys)

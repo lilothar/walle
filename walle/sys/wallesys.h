@@ -53,6 +53,7 @@
 #include <walle/sys/Weakcall.h>
 #include <walle/sys/CountDown.h>
 #include <walle/sys/Cmdline.h>
+#include <walle/sys/Stream.h>
 
 
 #endif

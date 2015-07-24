@@ -36,6 +36,8 @@ class Service{
 
         virtual int run() = 0;
 
+		virtual void dispose() = 0;
+
         virtual void version();
         virtual void runDaemon();
 
@@ -43,7 +45,7 @@ class Service{
     protected:
         virtual void onReadSignal();
        
-    private:
+    protected:
         bool             _isdaemon;
         bool             _active; 
         int              _signalfd;

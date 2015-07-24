@@ -18,6 +18,8 @@
 #include <walle/net/Timer.h>
 #include <walle/net/TimerId.h>
 #include <walle/net/Timertask.h>
+#include <walle/net/Service.h>
+
 
 
 

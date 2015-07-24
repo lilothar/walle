@@ -6,3 +6,6 @@ target_link_libraries(echo_client wallenet wallesys)
 
 add_executable(echo_server echo_server.cpp)
 target_link_libraries(echo_server wallenet wallesys)
+
+add_executable(test_service test_service.cpp)
+target_link_libraries(test_service wallenet wallesys)

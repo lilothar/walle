@@ -16,6 +16,8 @@ set(SYS_SRC
 	Url
 	MD5
 	CountDown
+	LogFile
+	Asynclog.cpp
 	)
 add_library(wallesys ${SYS_SRC})
 target_link_libraries(wallesys pthread rt)

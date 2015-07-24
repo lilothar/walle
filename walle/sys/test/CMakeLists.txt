@@ -24,3 +24,6 @@ target_link_libraries(test_cmdline wallesys)
 
 add_executable(test_config_mem test_config_mem.cpp)
 target_link_libraries(test_config_mem wallesys)
+
+add_executable(asynclog_test asynclog_test.cpp)
+target_link_libraries(asynclog_test wallesys)

@@ -57,6 +57,7 @@ void Service::addSignal(int sig)
 void Service::stop()
 {
 	_active = false;
+	_loop.quit();
 }
 int Service::main(int argc, char* argv[])
 {
@@ -64,8 +65,8 @@ int Service::main(int argc, char* argv[])
 	_isdaemon = false;
 	
 	_args.add("version", 'v', "show version");
-	_args.add<string>("config", 'c', "config file path", true,"./service.conf");
-	_args.add<string>("command", 'k', "user cmd", true);
+	_args.add<string>("config", 'c', "config file path", false,"./service.conf");
+	_args.add<string>("command", 'k', "user cmd", false);
 	_args.parse_check(argc,argv);
 
 	if(_args.exist("version")) {
@@ -75,7 +76,7 @@ int Service::main(int argc, char* argv[])
 
 	 _confFile =  _args.get<string>("config");
 	 if(!_conf.load(_confFile)) {
-		cout<<"onfig file load error to check config file"<<endl;
+		cout<<"Config file load error to check config file"<<endl;
 		exit(1);
 	 }
 	string cmd  =  _args.get<string>("command");
@@ -178,6 +179,8 @@ void Service::start()
 	}
 	_active = true;
 	run();	
+	_loop.loop();
+	dispose();
 }
 void Service::version()
 {

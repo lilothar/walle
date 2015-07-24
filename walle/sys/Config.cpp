@@ -4,6 +4,7 @@
 #include <algorithm>
 #include <walle/sys/Stream.h>
 #include <walle/sys/Logging.h>
+#include <walle/sys/StringUtil.h>
 
 
 using namespace std;
@@ -253,7 +254,10 @@ namespace sys {
 		int Config::getInt(const char *section, const string& key, int d)
 		{
 			string str = getString(section, key);
-			d = atoi(str.c_str());
+			if(str.empty()) {
+				return d;
+			}
+			d = StringUtil::atoix(str);
 			return d;
 		}
 		
@@ -273,7 +277,7 @@ namespace sys {
 			const char *p = data;
 			for(size_t i=0; i<it1->second.size(); i++) {
 				if (data[i] == '\0') {
-					ret.push_back(::atoi(p));
+					ret.push_back(StringUtil::atoix(p));
 					p = data+i+1;
 				}
 			}

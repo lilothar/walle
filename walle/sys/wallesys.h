@@ -54,6 +54,9 @@
 #include <walle/sys/CountDown.h>
 #include <walle/sys/Cmdline.h>
 #include <walle/sys/Stream.h>
+#include <walle/sys/LogFile.h>
+#include <walle/sys/Blockqueue.h>
+#include <walle/sys/Asynclog.h>
 
 
 #endif

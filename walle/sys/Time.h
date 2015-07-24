@@ -31,7 +31,10 @@ public:
         const char* spliter = "- :.");
 
     int64_t toSeconds() const;
-
+	int year() const;
+	int day() const;
+	int yday() const;
+	int month() const;
     int64_t toMilliSeconds() const;
 
     int64_t toMicroSeconds() const;
@@ -202,8 +205,8 @@ public:
    Time(int64_t usec);
     static const int kMicroSecondsPerSecond = 1000 * 1000;
 private:
-
-    int64_t _usec;
+	struct tm _ptm;
+    int64_t   _usec;
 };
 }
 }

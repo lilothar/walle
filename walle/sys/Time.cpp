@@ -68,10 +68,26 @@ Time Time::now(Clock clock)
     }
 }
 
-
 Time Time::seconds(int64_t t)
 {
     return Time(t * uint64_t(1000000));
+}
+
+int Time::year() const
+{
+	return _ptm.tm_year+1900;
+}
+int Time::day() const
+{
+	return _ptm.tm_mday;
+}
+int Time::yday() const
+{
+	return _ptm.tm_yday;
+}
+int Time::month() const
+{
+	return _ptm.tm_mon+1;
 }
 
 Time Time::milliSeconds(int64_t t)
@@ -172,6 +188,8 @@ std::string Time::toDuration() const
 Time::Time(int64_t usec):
     _usec(usec)
 {
+	time_t t = usec/kMicroSecondsPerSecond;
+	localtime_r(&t,&_ptm);
 }
 
 }

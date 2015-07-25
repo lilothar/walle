@@ -33,12 +33,6 @@ class Service{
     protected:
         void start();
         void stop();
-
-        virtual int run() = 0;
-
-		virtual void dispose() = 0;
-
-        virtual void version();
         virtual void runDaemon();
 		virtual bool initLogConf();
 		string                _logbase;
@@ -48,6 +42,9 @@ class Service{
 
         
     protected:
+		virtual int run() = 0;
+		virtual void version();
+		virtual void dispose() = 0;
         virtual void onReadSignal(Time t);
        
     protected:

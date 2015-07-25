@@ -106,7 +106,7 @@ string LogFile::getLogFileName(const Time &t)
 	char timebuf[32];
  	struct tm tm;
 	localtime_r(&now, &tm); // FIXME: localtime_r ?
-	strftime(timebuf, sizeof timebuf, ".%Y%m%d-%H%M%S.", &tm);
+	strftime(timebuf, sizeof timebuf, ".%Y%m%d-%H%M%S", &tm);
 	filename += timebuf;
 
 	

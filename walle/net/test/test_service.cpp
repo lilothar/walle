@@ -7,7 +7,8 @@ class HoleServer{
 	public:
 		
 		HoleServer(EventLoop* loop,  AddrInet& listenAddr, int threadnum)
-			: _loop(loop),
+			:_recived(0),
+			_loop(loop),
 			  _server(loop, listenAddr, "holeServer")
 		  {
 			_server.setConnectionCallback(
@@ -31,12 +32,15 @@ private:
 
    // conn->send("hello\n");
   }
-
+	
   void onMessage(const TcpConnectionPtr& conn, Buffer* buf, Time time)
   {
+  	_recived +=buf->readableBytes();
     buf->retrieveAll();
+	LOG_INFO<<"recived bytes: "<<_recived;
   }
 	private:
+	size_t     _recived;
 	EventLoop* _loop;
   	TcpServer _server;
 };

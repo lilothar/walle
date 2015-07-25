@@ -52,7 +52,7 @@ Time Poller::poll(int timeoutMs, ChannelList* activeChannels)
     if (savedErrno != EINTR)
     {
       errno = savedErrno;
-      LOG_ERROR<<"EPollPoller::poll()";
+      LOG_ERROR<<"EPollPoller::poll() errno: "<<savedErrno;
     }
   }
   return now;

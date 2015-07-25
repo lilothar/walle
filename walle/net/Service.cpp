@@ -22,14 +22,24 @@ int createSignalfd(int fd, sigset_t *mask)
 {
 	sigprocmask(SIG_BLOCK, mask, NULL);
 	if(sigprocmask(SIG_BLOCK, mask, NULL) == -1) {
+		LOG_ERROR<<"sigprocmask error errno:"<<errno;
 		return -1;
 	}
 	
-	signalfd(fd, mask ,SFD_NONBLOCK | SFD_CLOEXEC);	
-	return fd;
+	int refd = signalfd(fd, mask ,SFD_NONBLOCK | SFD_CLOEXEC);
+	
+	return refd;
 	
 }
+AsyncLogging* g_log = NULL;
+
+void gAlogOutput(const char* buff, size_t len)
+{
+	g_log->append(buff, len);
 }
+
+}
+
 
 Service::Service()
 {
@@ -121,7 +131,6 @@ int Service::main(int argc, char* argv[])
 void Service::runDaemon()
 {
 	int pid;
-	int i;
 	if((pid=fork()) > 0 ) {
 		exit(0);
 	} else if(pid < 0) {
@@ -134,11 +143,11 @@ void Service::runDaemon()
 	} else if(pid< 0) {		
 		exit(1);
 	}
-
-	for(i=0;i< NOFILE;++i) {
+/*
+	for(int i=0;i< NOFILE;++i) {
 		close(i);
 	}
-
+*/
 	_workdir = _conf.getString("global","service_work_dir");
 	if(!_workdir.empty()) {
 		chdir(_workdir.c_str());
@@ -162,32 +171,99 @@ void Service::start()
 		cout<<"no pidfile configed"<<endl;
 		exit(0);
 	}
-
-	runDaemon();
-	
-	_signalfd = detail::createSignalfd(_signalfd, &_sigmask);
-	if(_signalfd < 0) {
-		cerr<<"create signal fd error"<<endl;
+	if(initLogConf() == false) {
+		cout<<"log load config error"<<endl;	
+		exit(0);
 	}
+	
+	if(Filesystem::fileExist(_pidFile) ){
+			cout<<"already running"<<endl;	
+			exit(0);
+	}
+	
+	if(_isdaemon ) {
+		runDaemon();
+	}
+	AsyncLogging alog(_logbase,_rollsize,_interval);
+	detail::g_log =&alog;
+	Logger::setLogLevel(_loglevel);
+	Logger::setOutput(detail::gAlogOutput);
+	alog.waitStart();
+	_signalfd = detail::createSignalfd(-1, &_sigmask);
+	if(_signalfd < 3) {
+		cerr<<"create signal fd error"<<endl;
+		exit(0);
+	}
+	
+	LOG_INFO<<"signal fd : "<<_signalfd;
 	_sigChannel.reset(new Channel(&_loop,_signalfd));
-	_sigChannel->setReadCallback(boost::bind(&Service::onReadSignal,this));
+	_sigChannel->setReadCallback(boost::bind(&Service::onReadSignal,this,_1));
 	_sigChannel->enableReading();
 	{
+		
 		AppendFile f(_pidFile);
 		string pidnum = StringUtil::formateInteger(ProcessInfo::pid());
 		f.append(pidnum.c_str(), pidnum.size());
 	}
+	//init log
+
+
 	_active = true;
 	run();	
 	_loop.loop();
+	alog.stop();
 	dispose();
 }
+bool Service::initLogConf()
+{
+	string logdir = _conf.getString("log","service_log_dir");
+	string logprefix = _conf.getString("log","log_name_prefix");
+	 _interval = _conf.getInt("log","log_flush_interval",3);
+	 _rollsize = _conf.getInt("log","log_roll_size");	
+	string level = _conf.getString("log","log_level","info");
+	if(logdir.empty()||logprefix.empty()) {
+		return false;
+	}
+	if(logdir[0] !='/') {
+		return false;
+	}
+	if(logprefix[0] == '/') {
+		return false;
+	}
+	if(_rollsize < 1024*1024 ) {
+		_rollsize = 10*1024*1024;
+	}
+	_logbase = logdir;
+	if(_logbase[_logbase.size()-1] != '/' ) {
+		_logbase +="/";
+		_logbase += logprefix;
+	} else {
+		_logbase += logprefix;
+	}
+	if(level == "trace" || level == "TRACE") {
+		_loglevel = Logger::TRACE;
+	} else if(level == "debug" || level == "DEBUG") {
+		_loglevel = Logger::DEBUG;
+	}else if(level == "info" || level == "INFO") {
+		_loglevel = Logger::INFO;
+	}else if(level == "WARN" || level == "warn") {
+		_loglevel = Logger::WARN;
+	}else if(level == "error" || level == "ERROR") {
+		_loglevel = Logger::ERROR;
+	}else if(level == "fatal" || level == "FATAL") {
+		_loglevel = Logger::FATAL;
+	} else {
+		return false;
+	}
+	return true;
+}
+
 void Service::version()
 {
 	cout<<"walle energy 1.0"<<endl;
 }
 
-void Service::onReadSignal()
+void Service::onReadSignal(Time t)
  {
 	struct signalfd_siginfo fdsi;
 	ssize_t s = read(_signalfd, &fdsi, sizeof(struct signalfd_siginfo));

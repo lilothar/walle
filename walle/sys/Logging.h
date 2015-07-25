@@ -128,8 +128,8 @@ T* CheckNotNull(Logger::SourceFile file, int line, const char *names, T* ptr) {
 }
 #define LOG_TRACE walle::sys::Logger(__FILE__, __LINE__, walle::sys::Logger::TRACE, __func__).stream()
 #define LOG_DEBUG walle::sys::Logger(__FILE__, __LINE__, walle::sys::Logger::DEBUG, __func__).stream()
-#define LOG_INFO walle::sys::Logger(__FILE__, __LINE__, walle::sys::Logger::WARN).stream()
-#define LOG_WARN walle::sys::Logger(__FILE__, __LINE__, walle::sys::Logger::WARN).stream()
+#define LOG_INFO walle::sys::Logger(__FILE__, __LINE__, walle::sys::Logger::INFO,__func__).stream()
+#define LOG_WARN walle::sys::Logger(__FILE__, __LINE__, walle::sys::Logger::WARN,__func__).stream()
 #define LOG_ERROR walle::sys::Logger(__FILE__, __LINE__, walle::sys::Logger::ERROR, __func__).stream()
 #define LOG_FATAL walle::sys::Logger(__FILE__, __LINE__, walle::sys::Logger::FATAL, __func__).stream()
 

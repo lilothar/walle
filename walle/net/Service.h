@@ -40,10 +40,15 @@ class Service{
 
         virtual void version();
         virtual void runDaemon();
+		virtual bool initLogConf();
+		string                _logbase;
+		int                   _rollsize;
+		int                   _interval;
+		Logger::LogLevel      _loglevel;
 
         
     protected:
-        virtual void onReadSignal();
+        virtual void onReadSignal(Time t);
        
     protected:
         bool             _isdaemon;
@@ -61,6 +66,7 @@ class Service{
         sigset_t         _sigmask;
         parser           _args;
         static Service  *_instance;
+		
 
         
         

@@ -53,7 +53,7 @@ class Echoclient{
 		}
 		void onWriteComplete(const TcpConnectionPtr& conn)
 		{
-			conn->send("world");
+			conn->send("worldworldworldworldworldworldworldworldworldworld");
 
 		}
 		EventLoop *_loop;
@@ -67,7 +67,7 @@ int main(int argc, char* argv[])
 	LOG_INFO << "pid = " << getpid() << ", tid = " << walle::LocalThread::tid();  
 	if (argc > 1)  {
 		EventLoop loop;
-		AddrInet serverAddr("0.0.0.0", 9090);
+		AddrInet serverAddr(argv[1], 9090);
 		int n = 1;
 		if (argc > 2)    {
 			n = atoi(argv[2]);

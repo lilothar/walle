@@ -121,7 +121,6 @@ int Service::main(int argc, char* argv[])
 		} else {
 			 cout<<"[ERROR]: Not found pid["<<opid<<"]...."<<endl;
 		}
-		Filesystem::deleteFile(_pidFile);
 		exit(0);	
 		
 	} 
@@ -209,8 +208,11 @@ void Service::start()
 
 
 	_active = true;
-	run();	
-	_loop.loop();
+	int ret = run();
+	if(ret == 0 ) {
+		_loop.loop();
+	}
+	Filesystem::deleteFile(_pidFile);
 	alog.stop();
 	dispose();
 }

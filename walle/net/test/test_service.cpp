@@ -1,6 +1,6 @@
 #include <walle/net/wallenet.h>
 #include <boost/bind.hpp>
-
+#include <boost/bind.hpp>
 using namespace walle::net;
 
 class HoleServer{
@@ -16,6 +16,7 @@ class HoleServer{
 			_server.setMessageCallback(
 				boost::bind(&HoleServer::onMessage, this, _1, _2, _3));
 			_server.setThreadNum(threadnum);
+			_loop->runEvery(3000*1000,boost::bind(&HoleServer::log, this));
 		  }
 	void start()
   	{
@@ -23,6 +24,10 @@ class HoleServer{
   	}
 
 private:
+  void log() {
+	LOG_INFO<<"recived bytes: "<<_recived;
+  }
+	
   void onConnection(const TcpConnectionPtr& conn)
   {
     LOG_TRACE << conn->peerAddress().toString() << " -> "
@@ -37,13 +42,15 @@ private:
   {
   	_recived +=buf->readableBytes();
     buf->retrieveAll();
-	LOG_INFO<<"recived bytes: "<<_recived;
+	//LOG_INFO<<"recived bytes: "<<_recived;
   }
 	private:
 	size_t     _recived;
 	EventLoop* _loop;
   	TcpServer _server;
 };
+
+
 class app:public Service{
 	public:
 		app():_ser(0){}

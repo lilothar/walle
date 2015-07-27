@@ -25,6 +25,7 @@ class Service{
        Service();
        virtual ~Service();
        void addSignal(int sig);
+       virtual void setParseOption();
        int main(int argc, char*argv[]);
 
        bool  isDaemon();

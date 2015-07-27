@@ -212,13 +212,13 @@ namespace sys {
 		}
 	
 		string Config::getString(const string &section, const string& key, 
-											const string &d)
+											const string &d) const
 		{
-			SectionMapItr it = _configMap.find(section);
+			SectionMapCItr it = _configMap.find(section);
 			if (it == _configMap.end()) {
 				return string(d);
 			 }
-			KeyValueMapItr it1 = it->second->find(key);
+			KeyValueMapCItr it1 = it->second->find(key);
 			if (it1 == it->second->end()) {
 				return d;
 			}
@@ -227,14 +227,14 @@ namespace sys {
 		
 
 		vector<string> Config::getStringList(const string &section,
-									const string& key, const string &d)
+									const string& key, const string &d) const
 		{
 			vector<string> ret;
-			SectionMapItr it = _configMap.find(section);
+			SectionMapCItr it = _configMap.find(section);
 			if (it == _configMap.end()) {
 				return ret;
 			}
-			KeyValueMapItr it1 = it->second->find(key);
+			KeyValueMapCItr it1 = it->second->find(key);
 			if (it1 == it->second->end()) {
 				return ret;
 			}
@@ -251,7 +251,7 @@ namespace sys {
 		}
 	
 
-		int Config::getInt(const char *section, const string& key, int d)
+		int Config::getInt(const char *section, const string& key, int d) const 
 		{
 			string str = getString(section, key);
 			if(str.empty()) {
@@ -262,14 +262,14 @@ namespace sys {
 		}
 		
 		
-		vector<int> Config::getIntList(const string &section, const string& key)
+		vector<int> Config::getIntList(const string &section, const string& key) const
 		{
 			vector<int> ret;
-			SectionMapItr it = _configMap.find(section);
+			SectionMapCItr it = _configMap.find(section);
 			if (it == _configMap.end()) {
 				return ret;
 			}
-			KeyValueMapItr it1 = it->second->find(key);
+			KeyValueMapCItr it1 = it->second->find(key);
 			if (it1 == it->second->end()) {
 				return ret;
 			}
@@ -286,13 +286,13 @@ namespace sys {
 		}
 		
 
-		size_t Config::getSectionKey(const string &section, vector<string> &keys)
+		size_t Config::getSectionKey(const string &section, vector<string> &keys) const 
 		{
-			SectionMapItr it = _configMap.find(section);
+			SectionMapCItr it = _configMap.find(section);
 			if (it == _configMap.end()) {
 				return 0;
 			}
-			KeyValueMapItr it1;
+			KeyValueMapCItr it1;
 			for(it1=it->second->begin(); it1!=it->second->end(); ++it1) {
 				keys.push_back(it1->first);
 			}
@@ -300,9 +300,9 @@ namespace sys {
 		}
 				 
 
-		size_t Config::getSectionName(vector<string> &sections)
+		size_t Config::getSectionName(vector<string> &sections) const
 		{
-			SectionMapItr it;
+			SectionMapCItr it;
 			for(it=_configMap.begin(); it!=_configMap.end(); ++it)
 			{
 				sections.push_back(it->first);
@@ -311,11 +311,11 @@ namespace sys {
 		}
 	
 		// toString
-		string Config::toString()
+		string Config::toString() const 
 		{
 			string result;
-			SectionMapItr it;
-			KeyValueMapItr it1;
+			SectionMapCItr it;
+			KeyValueMapCItr it1;
 			for(it = _configMap.begin(); it != _configMap.end(); ++it) {
 				result += "[" + it->first + "]\n";
 				for(it1=it->second->begin(); it1!=it->second->end(); ++it1) {

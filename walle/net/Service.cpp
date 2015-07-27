@@ -69,14 +69,19 @@ void Service::stop()
 	_active = false;
 	_loop.quit();
 }
+void Service::setParseOption()
+{
+	_args.add("version", 'v', "show version");
+	_args.add<string>("config", 'c', "config file path", false,"./service.conf");
+	_args.add<string>("command", 'k', "user cmd", false);
+}
+
 int Service::main(int argc, char* argv[])
 {
 	
 	_isdaemon = false;
 	
-	_args.add("version", 'v', "show version");
-	_args.add<string>("config", 'c', "config file path", false,"./service.conf");
-	_args.add<string>("command", 'k', "user cmd", false);
+	setParseOption();
 	_args.parse_check(argc,argv);
 
 	if(_args.exist("version")) {
@@ -205,7 +210,6 @@ void Service::start()
 		f.append(pidnum.c_str(), pidnum.size());
 	}
 	//init log
-
 
 	_active = true;
 	int ret = run();

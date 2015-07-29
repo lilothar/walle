@@ -72,6 +72,17 @@ void HttpClientRequest::clearHeader()
 {
 	_headers.clear();
 }
+void   HttpClientRequest::setContentType(const string &type)
+{
+	addHeader("Content-Type",type);	
+}
+
+void  HttpClientRequest:: setContentLeng(int64_t n)
+{
+	string strlen = walle::sys::StringUtil::formateInteger(n);
+	addHeader("Content-Length",strlen);
+}
+
 string HttpClientRequest::getHeader(const string &key)
 {
 	DictItr itr = _headers.find(key);

@@ -2,6 +2,7 @@
 #define WALLE_HTTPCLIENTREQUEST_H_
 #include <string>
 #include <map>
+#include <stdint.h>
 
 using namespace std;
 namespace walle {
@@ -39,8 +40,9 @@ class HttpClientRequest{
         string        getMethodString();
         void   addHeader(const string &key, const string &value);
         string getHeader(const string &key);
-        void    clearHeader();
-
+        void   clearHeader();
+        void   setContentLeng(int64_t n); 
+        void   setContentType(const string &type);
         void   setBody(const string &body);
         const string& getBody() const;
 

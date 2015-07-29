@@ -4,6 +4,8 @@
 #include <string>
 #include <map>
 #include <walle/net/Buffer.h>
+#include <walle/sys/StringUtil.h>
+
 using namespace walle::net;
 using namespace std;
 namespace walle {
@@ -42,12 +44,22 @@ class HttpResponse
   void setContentType(const string& contentType)
   { addHeader("Content-Type", contentType); }
 
+  void setContentLeng(int64_t n) 
+  {
+    string len = walle::sys::StringUtil::formateInteger(n);
+    addHeader("Content-Length",len);
+    
+  }
+
   // FIXME: replace string with StringPiece
   void addHeader(const string& key, const string& value)
   { _headers[key] = value; }
 
   void setBody(const string& body)
-  { _body = body; }
+  {
+    _body = body;
+    setContentLeng(_body.size());
+  }
 
   void appendToBuffer(Buffer* output) const;
 

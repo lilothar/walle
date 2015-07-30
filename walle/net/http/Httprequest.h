@@ -170,7 +170,10 @@ class HttpRequest
     }
     _headers[field] = value;
   }
-
+  void setClientIp(const string &ip)
+  {
+    _clientip = ip;
+  }
   string getHeader(const string& field) const
   {
     string result;
@@ -218,7 +221,11 @@ class HttpRequest
   {
 
 	string r;
+   
 	r.append("debug");
+    r.append("clientaddr:\r\n");
+    r.append(_clientip);
+     r.append("\r\n");
 	r.append(methodString());
 	r.append("\r\n");
 	r.append(_path);
@@ -254,6 +261,7 @@ class HttpRequest
   }
 
  private:
+  string                   _clientip;
   string                   _body;
   Method                   _method;
   Version                  _version;

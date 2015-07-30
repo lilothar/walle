@@ -67,6 +67,7 @@ void Service::addSignal(int sig)
 void Service::stop()
 {
 	_active = false;
+	Filesystem::deleteFile(_pidFile);
 	_loop.quit();
 }
 void Service::setParseOption()
@@ -126,6 +127,7 @@ int Service::main(int argc, char* argv[])
 		} else {
 			 cout<<"[ERROR]: Not found pid["<<opid<<"]...."<<endl;
 		}
+		Filesystem::deleteFile(_pidFile);
 		exit(0);	
 		
 	} 
@@ -216,7 +218,7 @@ void Service::start()
 	if(ret == 0 ) {
 		_loop.loop();
 	}
-	Filesystem::deleteFile(_pidFile);
+
 	alog.stop();
 	dispose();
 }
@@ -276,6 +278,7 @@ void Service::onReadSignal(Time t)
 	if (s != sizeof(struct signalfd_siginfo)) {
 		LOG_ERROR<<"read signal error size: "<<s
 			<<"should be :"<<sizeof(struct signalfd_siginfo);
+		return ;
 	}
 	if (fdsi.ssi_signo == SIGINT) {
 		LOG_DEBUG<<"SIGINT signal to stop";

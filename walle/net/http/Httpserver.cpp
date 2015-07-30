@@ -172,6 +172,9 @@ void HttpServer::onConnection(const TcpConnectionPtr& conn)
   if (conn->connected())
   {
     conn->setContext(HttpContext());
+	 HttpContext* context = boost::any_cast<HttpContext>(conn->getMutableContext());
+	 string addr = conn->peerAddress().toString();
+	 context->request().setClientIp(addr);
   }
 }
 

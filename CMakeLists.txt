@@ -13,7 +13,7 @@ set(CXX_FLAGS
  -Wno-unused-parameter
  -Woverloaded-virtual
  -Wpointer-arith
- -Wshadow
+ #-Wshadow
  -Wwrite-strings
  -march=native
   -MMD
@@ -33,3 +33,4 @@ add_subdirectory(walle/sys)
 add_subdirectory(walle/net)
 add_subdirectory(walle/unit)
 add_subdirectory(walle/ext)
+add_subdirectory(walle/algo)

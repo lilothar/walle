@@ -1,10 +1,8 @@
-#ifndef WALLE_PAIR_H_
-#define WALLE_PAIR_H_
+#ifndef WALLE_PAIR_H__
+#define WALLE_PAIR_H__
 
 namespace walle {
-
 namespace algorithm {
-
 
 template<class T1, class T2>
 struct pair {
@@ -32,7 +30,6 @@ template<class T1, class T2>
 inline pair<T1, T2> make_pair(const T1& x, const T2& y) {
     return pair<T1, T2>(x, y);
 }
-
 }
 }
 #endif

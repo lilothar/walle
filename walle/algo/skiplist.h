@@ -5,7 +5,8 @@
 #include "constructor.h"
 #include "iterator.h"
 #include "Random.h"
-
+#include <time.h>
+using namespace std;
 namespace walle {
 
 namespace algorithm {
@@ -27,13 +28,20 @@ struct default_comparetor {
 
 };
 
+template <typename K, typename V>
+struct default_ex{
+	const K & operator()(const V &v) {
+		return v;
+	}
+};
+
 template <typename KEY>
 class skiplist_node {
     public:
-       const KEY                   data;
-       const int                   height;
+       KEY                   data;
+       int                         height;
        skiplist_node<KEY>         *prev;
-       skiplist_node<KEY>         *next;
+       skiplist_node<KEY>         *next[1];
 
 };
 
@@ -56,13 +64,17 @@ struct skiplist_iterator {
     link_type  node;
     
     skiplist_iterator(){}
+	skiplist_iterator(link_type x) : node(x) {}
+    skiplist_iterator(const iterator& x) : node(x.node) {}
+	self& operator=(link_type x) { node = x; return *this;}
+	self& operator=(const iterator& x) { node = x.node; return *this;}
     ~skiplist_iterator(){}
     bool operator==(const self& x) const { return node == x.node; }
     bool operator!=(const self& x) const { return node != x.node; }
     reference operator*() const { return (*node).data; }
     pointer operator->() const { return &(operator*()); }
     self& operator++() {
-        node = (link_type)((*node).next);
+        node = (link_type)((*node).next[0]);
         return *this;
     }
     self operator++(int) {
@@ -83,7 +95,7 @@ struct skiplist_iterator {
 }; 
 
 
-template<typename K, typename V, typename E,
+template<typename K, typename V, typename E = default_ex<K, V>,
     typename Compare = default_comparetor<K>, typename Alloc = allocator>
 
 class skiplist{
@@ -103,13 +115,14 @@ public:
 public:
     skiplist()
         :_maxheigth(kDefaultheigth),
-         _head(get_node(0,_maxheigth)),
-         _tail(get_node(0,_maxheigth)),
-         _size(0)
+         _head(create_node(0,_maxheigth)),
+         _tail(create_node(0,_maxheigth)),
+         _size(0),
+         _rad(::time(NULL))
          
     {
         for(int i = 0; i < _maxheigth; i++ ) {
-            _head->next[i] = _tail;     
+            _head->next[i]  = _tail;     
         }
         _tail->prev = _head;
         _head->prev = NULL;
@@ -118,8 +131,8 @@ public:
        
     ~skiplist()
     {
-        link_type *l = _head;
-        link_type *tmp ;
+        link_type l = _head;
+        link_type tmp ;
         while(l != _tail) {
             tmp = l->next[0];
             destory_node(l);
@@ -131,13 +144,13 @@ public:
 
     }
 
-    iterator begin() { return (link_type*)(_head->next); }
-    iterator end() {return _tail; }
+    iterator begin() { return iterator(_head->next[0]); }
+    iterator end() {return iterator(_tail); }
 
     void clear()
     {
-        link_type *l = _head->next;
-        link_type *tmp ;
+        link_type l = _head->next[0];
+        link_type tmp ;
         while(l != _tail) {
             tmp = l->next[0];
             destory_node(l);
@@ -156,29 +169,29 @@ public:
 
     void insert(const value_type& v)
     {
-        int h = _rad.oneIn(_maxheigth);
+        int h = _rad.uniform(_maxheigth) +  1;
         link_type ln = create_node(v, h);
         link_type updateArray[_maxheigth];
         int k = _maxheigth - 1;
         link_type p = _head;
         link_type q;
         do {
-            while (q = p->next[k] &&
+            while ((q = p->next[k]) && q !=_tail &&
                 _cmper(_ex(q->data),_ex(v)) < 0 ) {
 
                 p = q;
             }
             updateArray[k] = p; 
-        } while(--k > 0);
+        } while(--k >= 0);
         // insert to p-v-q;
         k = ln->height - 1;
         do {
             p = updateArray[k];
             ln->next[k] = p->next[k];
             p->next[k] = ln;
-            ln->prev = updateArray[0];
         } while(--k >= 0);
-        
+		ln->prev = updateArray[0];
+		_size++;        
 
     }
     void remove(const value_type& v)
@@ -189,13 +202,13 @@ public:
         link_type p = _head;
         link_type q;
         do {
-            while (q = p->next[k] &&
+            while (q = p->next[k] && q !=_tail &&
                 _cmper(_ex(q->data),_ex(v)) < 0 ) {
 
                 p = q;
             }
             updateArray[k] = p; 
-        } while(--k > 0);
+        } while(--k >= 0);
 
         //found
         if(_cmper(_ex(q->data),_ex(v)) == 0) {
@@ -206,8 +219,9 @@ public:
         
             } while (--k >= 0);
             q->next->prev = q->prev;
+			  _size--;   
         }
-               
+          
 
     }
 
@@ -217,7 +231,7 @@ public:
         link_type q; 
         int k = _maxheigth -1 ;
         do {
-            while (q = p->next[k] &&
+            while (q = p->next[k] && q !=_tail &&
                 _cmper(_ex(q->data),_ex(v)) < 0 ) {
 
                 p = q;
@@ -238,7 +252,7 @@ public:
         link_type q; 
         int k = _maxheigth;
         do {
-            while (q = p->next[k] &&
+            while (q = p->next[k] && q !=_tail &&
                 _cmper(_ex(q->data),_ex(v)) < 0 ) {
 
                 p = q;
@@ -257,7 +271,7 @@ public:
         link_type q; 
         int k = _maxheigth;
         do {
-            while (q = p->next[k] &&
+            while (q = p->next[k] && q !=_tail &&
                 _cmper(_ex(q->data),_ex(v)) < 0 ) {
 
                 p = q;
@@ -289,6 +303,9 @@ protected:
         link_type mem =  get_node(h);
         construct(&mem->data,v);
         mem->height = h;
+		for(int i = 0; i < h; i++ ) {
+			mem->next[i] = 0;
+		}
         return mem;
     }
 

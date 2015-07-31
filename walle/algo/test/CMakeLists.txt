@@ -1,2 +1,2 @@
-add_executable(test test.cpp)
+add_executable(test_skip test_skip.cpp)
 

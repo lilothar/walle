@@ -6,6 +6,7 @@ namespace walle {
 namespace algorithm {
 
 class allocator{
+	public:
 	static void* allocate(size_t n)
 	{
 		void *result = malloc(n);
@@ -16,7 +17,11 @@ class allocator{
 	{
 		free(p);
 	}
-
+	
+	static void deallocate(void* p, size_t n)
+	{
+		free(p);
+	}
 	static void* reallocate(void* p, size_t old, size_t nsize)
 	{
 		void *result = realloc(p, nsize);
@@ -29,12 +34,12 @@ template <typename T,typename Alloc>
 	public:
 		static T* allocate(size_t n)
 		{
-			return n == 0? 0:Alloc::alocate(sizeof(T) * n);
+			return n == 0? (T*)0:(T*)Alloc::allocate(sizeof(T) * n);
 		}
 
 		static T* allocate(void)
 		{
-			return Alloc::alocate(sizeof(T));
+			return (T*)Alloc::allocate(sizeof(T));
 		}
 
 		static void deallocate(T* e, size_t n) 

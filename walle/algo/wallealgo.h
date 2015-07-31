@@ -7,4 +7,6 @@
 #include<walle/algo/uninitialized.h>
 #include<walle/algo/functional.h>
 #include<walle/algo/iterator.h>
+#include <walle/algo/skiplist.h>
+
 #endif

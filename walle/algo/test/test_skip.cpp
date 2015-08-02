@@ -18,6 +18,27 @@ int main ()
 		while(itr != sl.end()) {
 			cout<<*itr++<<endl;
 		}
+		cout<<"@@@@@@@@@@@@@@@@@@"<<endl;
+		sl.remove(5);
+		itr = sl.begin();
+		cout<<sl.size()<<endl;
+		while(itr != sl.end()) {
+			cout<<*itr++<<endl;
+		}
 	
+		cout<<"1224"<<endl;
+		itr =sl.find_lower(5);
+		while(itr != sl.rend()) {
+			cout<<*itr--<<endl;
+		}
+
+		cout<<"2 2 4 9"<<endl;
+		itr =sl.find_upper(2);
+		while(itr != sl.end()) {
+			cout<<*itr++<<endl;
+		}
+
+		itr = sl.find(4);
+		cout<<*itr<<endl;
 	return 0;
 }

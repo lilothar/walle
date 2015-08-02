@@ -95,23 +95,25 @@ struct skiplist_iterator {
 }; 
 
 
-template<typename K, typename V, typename E = default_ex<K, V>,
-    typename Compare = default_comparetor<K>, typename Alloc = allocator>
+template<typename Key, typename Value, 
+	typename E = default_ex<Key, Value>,
+    typename Compare = default_comparetor<Key>, typename Alloc = allocator>
 
 class skiplist{
 public:
-    typedef skiplist_iterator<V, V&, V*> iterator;
-    typedef skiplist_iterator<V, const V&, const V*> const_iterator;
-    typedef V      value_type;
+    typedef skiplist_iterator<Value, Value&, Value*> iterator;
+    typedef skiplist_iterator<Value, const Value&, const Value*> const_iterator;
+    typedef Value     value_type;
+	typedef Key      key_type;
     typedef ptrdiff_t difference_type;
     typedef value_type* pointer;
     typedef value_type& reference;
     typedef const value_type* const_pointer;
     typedef const value_type& const_reference;
-    typedef skiplist_node<V>  node_type;
-    typedef skiplist_node<V>* link_type;
+    typedef skiplist_node<Value>  node_type;
+    typedef skiplist_node<Value>* link_type;
     typedef size_t            size_type;
-    typedef default_alloc<skiplist_node<V>, Alloc> list_node_allocator; 
+    typedef default_alloc<skiplist_node<Value>, Alloc> list_node_allocator; 
 public:
     skiplist()
         :_maxheigth(kDefaultheigth),
@@ -145,9 +147,18 @@ public:
     }
 
     iterator begin() { return iterator(_head->next[0]); }
+	iterator rbegin() { return iterator(_tail->prev); }
     iterator end() {return iterator(_tail); }
+	iterator rend() {return iterator(_head); }
+/*
+	iterator operator[](const key_type &k) const
+	{
+		iterator itr =  find(k);
+		return itr;
+	}
 
-    void clear()
+ */
+ 	void clear()
     {
         link_type l = _head->next[0];
         link_type tmp ;
@@ -190,11 +201,13 @@ public:
             ln->next[k] = p->next[k];
             p->next[k] = ln;
         } while(--k >= 0);
+		
 		ln->prev = updateArray[0];
+		ln->next[0]->prev = ln;
 		_size++;        
 
     }
-    void remove(const value_type& v)
+    void remove(const key_type& key)
     {
 
         link_type updateArray[_maxheigth];
@@ -202,8 +215,8 @@ public:
         link_type p = _head;
         link_type q;
         do {
-            while (q = p->next[k] && q !=_tail &&
-                _cmper(_ex(q->data),_ex(v)) < 0 ) {
+            while ((q = p->next[k]) && q !=_tail &&
+                _cmper(_ex(q->data),key) < 0 ) {
 
                 p = q;
             }
@@ -211,49 +224,50 @@ public:
         } while(--k >= 0);
 
         //found
-        if(_cmper(_ex(q->data),_ex(v)) == 0) {
+        if(_cmper(_ex(q->data),key) == 0) {
             k = q->height - 1;
             do {
                 p = updateArray[k];
                 p->next[k] = q->next[k];
         
             } while (--k >= 0);
-            q->next->prev = q->prev;
+            q->next[0]->prev = q->prev;
 			  _size--;   
         }
           
 
     }
 
-    iterator find(const value_type& v)
+
+    iterator find(const key_type& key)
     {
         link_type p = _head;
         link_type q; 
         int k = _maxheigth -1 ;
         do {
-            while (q = p->next[k] && q !=_tail &&
-                _cmper(_ex(q->data),_ex(v)) < 0 ) {
+            while ((q = p->next[k]) && q !=_tail &&
+                _cmper(_ex(q->data), key) < 0 ) {
 
                 p = q;
             }
         
         }while (--k >= 0);
         // p < v <= q
-        if(_cmper(_ex(q->data),_ex(v)) == 0) {
-            return q;
+        if(_cmper(_ex(q->data),key) == 0) {
+            return iterator(q);
         }
         //not found
-        return _tail;
+        return iterator(_tail);
     }
-    
-    iterator find_lower(const value_type& v)
+
+    iterator find_lower(const key_type& key)
     {
         link_type p = _head;
         link_type q; 
         int k = _maxheigth;
         do {
-            while (q = p->next[k] && q !=_tail &&
-                _cmper(_ex(q->data),_ex(v)) < 0 ) {
+            while ((q = p->next[k] )&& q !=_tail &&
+                _cmper(_ex(q->data), key) < 0 ) {
 
                 p = q;
             }
@@ -265,14 +279,15 @@ public:
         return p;   
     }
 
-    iterator find_upper(const value_type& v)
+
+    iterator find_upper(const key_type& key)
     {
         link_type p = _head;
         link_type q; 
         int k = _maxheigth;
         do {
-            while (q = p->next[k] && q !=_tail &&
-                _cmper(_ex(q->data),_ex(v)) < 0 ) {
+            while ((q = p->next[k]) && q !=_tail &&
+                _cmper(_ex(q->data), key) < 0 ) {
 
                 p = q;
             }
@@ -281,7 +296,7 @@ public:
         // p < v <= q
         
         //not found
-        return p->next;   
+        return p->next[0];   
 
     }
     size_type size() { return _size; }

@@ -131,14 +131,14 @@ namespace sys {
 				}
 				ret = parseValue(data, key, value);
 				if (ret == false) {
-					
+					LOG_ERROR<<"parse config error on line: "<<line;
 					return false;
 				}
 				if (key.empty()) {
 					continue;
 				}
 				if (m == NULL) {
-				
+					LOG_ERROR<<"parse config error on line: "<<line;
 					return false;
 				}			 
 
@@ -164,7 +164,7 @@ namespace sys {
 			string          value;
 			
 			if ((fp = fopen(filename.c_str(), "rb")) == NULL) {
-			
+				LOG_ERROR<<"parse config error, open config file error";
 				return false;
 			}
 			
@@ -184,7 +184,7 @@ namespace sys {
 				}
 				ret = parseValue(data, key, value);
 				if (ret == false) {
-					
+					LOG_ERROR<<"parse config error on line: "<<line;	
 					fclose(fp);
 					return false;
 				}
@@ -192,7 +192,7 @@ namespace sys {
 					continue;
 				}
 				if (m == NULL) {
-					
+					LOG_ERROR<<"parse config error on line: "<<line;	
 					fclose(fp);
 					return false;
 				}			 

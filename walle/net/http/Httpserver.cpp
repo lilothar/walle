@@ -78,6 +78,7 @@ bool parseRequest(Buffer* buf, HttpContext* context, Time receiveTime)
           buf->retrieveUntil(crlf + 2);
           context->receiveRequestLine();
         } else {
+     
           hasMore = false;
         }
       } else {
@@ -121,7 +122,8 @@ bool parseRequest(Buffer* buf, HttpContext* context, Time receiveTime)
     	}
 	   size_t bufflen = buf->readableBytes();
 	   if(bufflen >= cachelen) {
-	   		req.setBody(buf);
+	   		req.setBody(buf, cachelen);
+			buf->retrieve(cachelen);
 			context->receiveBody();
 			hasMore = false;
 			continue;
@@ -186,6 +188,7 @@ void HttpServer::onMessage(const TcpConnectionPtr& conn,
 
   if (!detail::parseRequest(buf, context, receiveTime))
   {
+  	LOG_ERROR<<"parse error: "<<buf;
     conn->send("HTTP/1.1 400 Bad Request\r\n\r\n");
     conn->shutdown();
   }

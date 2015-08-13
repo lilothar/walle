@@ -14,7 +14,7 @@ bool benchmark = false;
 
 void onRequest(const HttpRequest& req, HttpResponse* resp)
 {
-  std::cout << "Headers " << req.methodString() << " " << req.path() << std::endl;
+  //std::cout << "Headers " << req.methodString() << " " << req.path() << std::endl;
   if (!benchmark)
   {
     const std::map<string, string>& headers = req.args();
@@ -28,15 +28,16 @@ void onRequest(const HttpRequest& req, HttpResponse* resp)
 
   if (req.path() == "/")
   {
-  	std::cout<<req.toString()<<std::endl;
+  	//std::cout<<req.toString()<<std::endl;
     resp->setStatusCode(HttpResponse::k200Ok);
     resp->setStatusMessage("OK");
     resp->setContentType("text/html");
     resp->addHeader("Server", "walle");
     string now = Time::now().toDateTime();
-    resp->setBody("<html><head><title>This is title</title></head>"
-        "<body><h1>Hello</h1>Now is " + now +
-        "</body></html>");
+	string b ="<html><head><title>This is title</title></head>"
+        "<body><h1>Hello</h1>Now is " + now +string(1024*5,'a')+
+        "</body></html>";
+    resp->setBody(b);
   }
   else if (req.path() == "/favicon.ico")
   {

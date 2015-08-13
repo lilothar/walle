@@ -74,8 +74,7 @@ void TcpServer::newConnection(int sockfd, const AddrInet& peerAddr)
   string connName = _name + buf;
   AddrInet localAddr;
   localAddr.upDateLocal(sockfd);
-  // FIXME poll with zero timeout to double confirm the new connection
-  // FIXME use make_shared if necessary
+
   TcpConnectionPtr conn(new TcpConnection(ioLoop,
                                           connName,
                                           sockfd,
@@ -86,13 +85,13 @@ void TcpServer::newConnection(int sockfd, const AddrInet& peerAddr)
   conn->setMessageCallback(_messageCallback);
   conn->setWriteCompleteCallback(_writeCompleteCallback);
   conn->setCloseCallback(
-      boost::bind(&TcpServer::removeConnection, this, _1)); // FIXME: unsafe
+      boost::bind(&TcpServer::removeConnection, this, _1)); 
   ioLoop->runInLoop(boost::bind(&TcpConnection::connectEstablished, conn));
 }
 
 void TcpServer::removeConnection(const TcpConnectionPtr& conn)
 {
-  // FIXME: unsafe
+
   _loop->runInLoop(boost::bind(&TcpServer::removeConnectionInLoop, this, conn)
 );
 }

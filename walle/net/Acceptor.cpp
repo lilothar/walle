@@ -21,7 +21,12 @@ Acceptor::Acceptor(EventLoop* loop,  AddrInet& listenAddr, bool reuseport)
     _idleFd(::open("/dev/null", O_RDONLY | O_CLOEXEC))
 {
   assert(_idleFd >= 0);
-  _acceptSocket.bind(listenAddr);
+  if(!_acceptSocket.bind(listenAddr)) {
+
+	LOG_ERROR<<"addr in use can not bind";
+  	abort();
+	
+  }
   _acceptSocket.setReuseAddress(reuseport);
   _acceptChannel.setUp(_loop,_acceptSocket.getFd());
   _acceptChannel.setReadCallback(
@@ -39,7 +44,7 @@ void Acceptor::listen()
 {
   _loop->assertInLoopThread();
 
-  bool rc = _acceptSocket.listen(5);
+  bool rc = _acceptSocket.listen(102400);
   if(rc == false ) {
 	LOG_ERROR<<"bind and listen addr error";
 	assert(false);

@@ -174,6 +174,10 @@ class HttpRequest
   {
     _clientip = ip;
   }
+  string getClientIp()
+  {
+       return _clientip;
+  }
   string getHeader(const string& field) const
   {
     string result;
@@ -204,9 +208,9 @@ class HttpRequest
   {
 	return _body;
   }
-  void  setBody(Buffer *buf)
+  void  setBody(Buffer *buf, size_t size)
   {
-	_body.append(buf->peek(),buf->readableBytes());
+	_body.append(buf->peek(),size);
   }
 
   size_t getCachelen()
@@ -223,7 +227,7 @@ class HttpRequest
 	string r;
    
 	r.append("debug");
-    r.append("clientaddr:\r\n");
+    r.append("clientaddr:\r\n");    
     r.append(_clientip);
      r.append("\r\n");
 	r.append(methodString());

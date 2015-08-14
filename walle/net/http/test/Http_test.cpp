@@ -73,6 +73,7 @@ int main(int argc, char* argv[])
   {
     benchmark = true;
     numThreads = atoi(argv[1]);
+	walle::sys::Logger::setLogLevel(walle::sys::Logger::WARN);
   }
   EventLoop loop;
   AddrInet Addr("localhost:8080");

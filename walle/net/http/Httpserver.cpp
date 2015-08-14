@@ -211,6 +211,7 @@ req)
   Buffer buf;
   response.appendToBuffer(&buf);
   conn->send(&buf);
+
   if (response.closeConnection())
   {
     conn->shutdown();

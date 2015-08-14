@@ -68,10 +68,10 @@ void TcpServer::newConnection(int sockfd, const AddrInet& peerAddr)
 {
   _loop->assertInLoopThread();
   EventLoop* ioLoop = _threadPool->getNextLoop();
-  char buf[32];
-  snprintf(buf, sizeof buf, ":%s#%d", _hostport.c_str(), _nextConnId);
+  char buf[128];
+  snprintf(buf, sizeof buf, "%s:%s#%d",_name.c_str(), _hostport.c_str(), _nextConnId);
   ++_nextConnId;
-  string connName = _name + buf;
+  string connName(buf);
   AddrInet localAddr;
   localAddr.upDateLocal(sockfd);
 

@@ -117,7 +117,6 @@ void Channel::handleEventWithGuard(Time receiveTime)
   {
     if (_writeCallback) _writeCallback();
   }
-   LOG_DEBUG<<"Channel::handleEvent fd;"<<_fd;
   _eventHandling = false;
 }
 

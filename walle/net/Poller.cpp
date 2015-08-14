@@ -65,12 +65,6 @@ void Poller::fillActiveChannels(int numEvents,
   for (int i = 0; i < numEvents; ++i)
   {
     Channel* channel = static_cast<Channel*>(_events[i].data.ptr);
-#ifndef NDEBUG
-    int fd = channel->fd();
-    ChannelMap::const_iterator it = _channels.find(fd);
-    assert(it != _channels.end());
-    assert(it->second == channel);
-#endif
     channel->set_revents(_events[i].events);
     activeChannels->push_back(channel);
   }
@@ -86,13 +80,13 @@ void Poller::updateChannel(Channel* channel)
     int fd = channel->fd();
     if (index == kNew)
     {
-      assert(_channels.find(fd) == _channels.end());
+      //assert(_channels.find(fd) == _channels.end());
       _channels[fd] = channel;
     }
     else // index == kDeleted
     {
-      assert(_channels.find(fd) != _channels.end());
-      assert(_channels[fd] == channel);
+      //assert(_channels.find(fd) != _channels.end());
+      //assert(_channels[fd] == channel);
     }
     channel->set_index(kAdded);
     update(EPOLL_CTL_ADD, channel);
@@ -101,9 +95,9 @@ void Poller::updateChannel(Channel* channel)
     // update existing one with EPOLL_CTL_MOD/DEL
     int fd = channel->fd();
     (void)fd;
-    assert(_channels.find(fd) != _channels.end());
-    assert(_channels[fd] == channel);
-    assert(index == kAdded);
+    //assert(_channels.find(fd) != _channels.end());
+    //assert(_channels[fd] == channel);
+    //assert(index == kAdded);
     if (channel->isNoneEvent()){
 			update(EPOLL_CTL_DEL, channel);
       channel->set_index(kDeleted);
@@ -116,14 +110,14 @@ void Poller::removeChannel(Channel* channel)
 {
   Poller::assertInLoopThread();
   int fd = channel->fd();
-  assert(_channels.find(fd) != _channels.end());
-  assert(_channels[fd] == channel);
-  assert(channel->isNoneEvent());
+  //assert(_channels.find(fd) != _channels.end());
+  //assert(_channels[fd] == channel);
+  //assert(channel->isNoneEvent());
   int index = channel->index();
-  assert(index == kAdded || index == kDeleted);
+ // assert(index == kAdded || index == kDeleted);
   size_t n = _channels.erase(fd);
   (void)n;
-  assert(n == 1);
+  //assert(n == 1);
 
   if (index == kAdded)
   {

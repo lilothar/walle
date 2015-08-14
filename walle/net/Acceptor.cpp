@@ -44,7 +44,7 @@ void Acceptor::listen()
 {
   _loop->assertInLoopThread();
 
-  bool rc = _acceptSocket.listen(102400);
+  bool rc = _acceptSocket.listen(SOMAXCONN);
   if(rc == false ) {
 	LOG_ERROR<<"bind and listen addr error";
 	assert(false);
@@ -55,36 +55,35 @@ void Acceptor::listen()
 
 void Acceptor::handleRead()
 {
-  _loop->assertInLoopThread();
-  AddrInet peerAddr;
-
-  int connfd = _acceptSocket.accept(peerAddr);
-  if (connfd >= 0)
-  {
-    string hostport = peerAddr.toString();
-    LOG_TRACE << "Accepts of " << hostport;
-    if (_newConnectionCallback)
-    {
-      _newConnectionCallback(connfd, peerAddr);
-    }
-    else
-    {
-      ::close(connfd);
-    }
-  }
-  else
-  {
-    LOG_ERROR<<"in Acceptor::handleRead";
-    // Read the section named "The special problem of
-    // accept()ing when you can't" in libev's doc.
-    // By Marc Lehmann, author of livev.
-    if (errno == EMFILE)
-    {
-      ::close(_idleFd);
-      _idleFd = ::accept(_acceptSocket.getFd(), NULL, NULL);
-      ::close(_idleFd);
-      _idleFd = ::open("/dev/null", O_RDONLY | O_CLOEXEC);
-    }
-  }
+	_loop->assertInLoopThread();
+  	AddrInet peerAddr;
+  	int connfd;
+  	do {
+  		connfd = _acceptSocket.accept(peerAddr);
+	  	if (connfd >= 0) {
+	    	string hostport = peerAddr.toString();
+	    	LOG_TRACE << "Accepts of " << hostport;
+	    	if (_newConnectionCallback) {
+	     		 _newConnectionCallback(connfd, peerAddr);
+	    	} else{
+	      		::close(connfd);
+	    	}
+	  	}else {
+			if(errno == EAGAIN){
+				break;
+			}    
+	    // Read the section named "The special problem of
+	    // accept()ing when you can't" in libev's doc.
+	    // By Marc Lehmann, author of livev.
+	    if (errno == EMFILE) {
+	      ::close(_idleFd);
+	      _idleFd = ::accept(_acceptSocket.getFd(), NULL, NULL);
+	      ::close(_idleFd);
+	      _idleFd = ::open("/dev/null", O_RDONLY | O_CLOEXEC);
+		  break;
+	    }
+		LOG_ERROR<<"in Acceptor::handleRead";
+	  }
+	}while(connfd > 0);
 }
 

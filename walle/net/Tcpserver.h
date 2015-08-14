@@ -4,6 +4,7 @@
 #include <walle/sys/Atomic.h>
 #include <walle/net/TcpConnection.h>
 #include <boost/function.hpp>
+#include <tr1/unordered_map>
 
 #include <map>
 #include <boost/noncopyable.hpp>
@@ -91,8 +92,7 @@ class TcpServer : boost::noncopyable
   /// Not thread safe, but in loop
   void removeConnectionInLoop(const TcpConnectionPtr& conn);
 
-  typedef std::map<string, TcpConnectionPtr> ConnectionMap;
-
+  typedef std::tr1::unordered_map<string, TcpConnectionPtr> ConnectionMap;
   EventLoop*                             _loop;  // the acceptor loop
   const string                           _hostport;
   const string                           _name;

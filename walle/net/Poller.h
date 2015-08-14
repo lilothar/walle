@@ -1,7 +1,7 @@
 #ifndef WALLE_POLLER_H_
 #define WALLE_POLLER_H_
 
-#include <map>
+#include <tr1/unordered_map>
 #include <vector>
 #include <boost/noncopyable.hpp>
 
@@ -45,7 +45,7 @@ class Poller
   }
 
  protected:
-  typedef std::map<int, Channel*> ChannelMap;
+  typedef std::tr1::unordered_map<int, Channel*> ChannelMap;
   ChannelMap _channels;
 
  private:

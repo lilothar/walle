@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include <sys/resource.h>
 using namespace std;
-int kRollSize = 100*1000*1000;
+int kRollSize = 1000*1000*1000;
 using namespace walle::sys;
 AsyncLogging* g_asyncLog = NULL;
 
@@ -22,11 +22,9 @@ void bench(bool longLog)
   string longStr(3000, 'X');
   longStr += " ";
 
-  for (int t = 0; t < 3000; ++t)
-  {
+  for (int t = 0; t < 3000; ++t) {
     Time start = Time::now();
-    for (int i = 0; i < kBatch; ++i)
-    {
+    for (int i = 0; i < kBatch; ++i) {
       LOG_INFO << "Hello 0123456789" << " abcdefghijklmnopqrstuvwxyz "
                << (longLog ? longStr : empty)
                << cnt;

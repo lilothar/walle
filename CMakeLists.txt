@@ -4,7 +4,7 @@ project(walle)
 
 set(CXX_FLAGS
  -g
- -O2
+ -O0
  # -DVALGRIND
  -DCHECK_PTHREAD_RETURN_VALUE
  -D_FILE_OFFSET_BITS=64

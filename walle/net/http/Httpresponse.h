@@ -66,7 +66,6 @@ class HttpResponse
  private:
   std::map<string, string> _headers;
   HttpStatusCode _statusCode;
-  // FIXME: add http version
   string _statusMessage;
   bool _closeConnection;
   string _body;

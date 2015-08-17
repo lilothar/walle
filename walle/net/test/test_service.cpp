@@ -58,7 +58,7 @@ class app:public Service{
 	private:
 		virtual int run()
 		{
-			_serverBaseloop = _th.startLoop();
+			/*_serverBaseloop = _th.startLoop();
 			int thnum = _conf.getInt("global","thread_num");
 			if(thnum == 0) {
 				thnum = 1;
@@ -67,14 +67,17 @@ class app:public Service{
 			AddrInet netaddr(serveraddr.c_str());
 			_ser = new HoleServer(_serverBaseloop,netaddr,thnum);
 			_ser->start();
+			*/
 			return 0;
 		}
 		virtual void dispose() 
 		{
+		/*
 			delete _ser;
 			_serverBaseloop->quit();
 			_th.join();
 			delete this;
+			*/
 		}
 	private:
 		HoleServer *_ser;

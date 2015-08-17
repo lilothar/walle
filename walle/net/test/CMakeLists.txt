@@ -12,3 +12,6 @@ target_link_libraries(test_service wallenet wallesys)
 
 add_executable(test_service_client test_service_client.cpp)
 target_link_libraries(test_service_client wallenet wallesys)
+
+add_executable(signal_test signal_test.cpp)
+target_link_libraries(signal_test wallenet wallesys)

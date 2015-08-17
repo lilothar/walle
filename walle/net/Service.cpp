@@ -20,7 +20,7 @@ namespace detail{
 
 int createSignalfd(int fd, sigset_t *mask)
 {
-	sigprocmask(SIG_BLOCK, mask, NULL);
+
 	if(sigprocmask(SIG_BLOCK, mask, NULL) == -1) {
 		LOG_ERROR<<"sigprocmask error errno:"<<errno;
 		return -1;
@@ -43,9 +43,7 @@ void gAlogOutput(const char* buff, size_t len)
 
 Service::Service()
 {
-	sigemptyset(&_sigmask);
-	sigaddset(&_sigmask, SIGINT);
-	sigaddset(&_sigmask, SIGQUIT);
+
 	
 }
 
@@ -68,7 +66,7 @@ void Service::stop()
 {
 	_active = false;
 	Filesystem::deleteFile(_pidFile);
-	_loop.quit();
+	_loop->quit();
 }
 void Service::setParseOption()
 {
@@ -149,11 +147,18 @@ void Service::runDaemon()
 	} else if(pid< 0) {		
 		exit(1);
 	}
-/*
+
 	for(int i=0;i< NOFILE;++i) {
 		close(i);
 	}
-*/
+	
+	int fd = open("/dev/null",O_RDWR| O_CLOEXEC );
+	assert( fd == 0 );
+	fd = dup2(0,1);
+	assert( fd == 1 );
+	fd = dup2(1,2);
+	assert( fd == 2 ); 
+
 	_workdir = _conf.getString("global","service_work_dir");
 	if(!_workdir.empty()) {
 		chdir(_workdir.c_str());
@@ -186,15 +191,19 @@ void Service::start()
 			cout<<"already running"<<endl;	
 			exit(0);
 	}
-	
+
+
 	if(_isdaemon ) {
 		runDaemon();
 	}
-	AsyncLogging alog(_logbase,_rollsize,_interval);
-	detail::g_log =&alog;
-	Logger::setLogLevel(_loglevel);
-	Logger::setOutput(detail::gAlogOutput);
-	alog.waitStart();
+
+	EventLoop loop;
+	_loop = &loop;
+	
+	sigemptyset(&_sigmask);
+	sigaddset(&_sigmask, SIGINT);
+	sigaddset(&_sigmask, SIGQUIT);
+
 	_signalfd = detail::createSignalfd(-1, &_sigmask);
 	if(_signalfd < 3) {
 		cerr<<"create signal fd error"<<endl;
@@ -202,9 +211,16 @@ void Service::start()
 	}
 	
 	LOG_INFO<<"signal fd : "<<_signalfd;
-	_sigChannel.reset(new Channel(&_loop,_signalfd));
+	_sigChannel.reset(new Channel(_loop,_signalfd));
 	_sigChannel->setReadCallback(boost::bind(&Service::onReadSignal,this,_1));
 	_sigChannel->enableReading();
+
+	AsyncLogging alog(_logbase,_rollsize,_interval);
+	detail::g_log =&alog;
+	Logger::setLogLevel(_loglevel);
+	Logger::setOutput(detail::gAlogOutput);
+	alog.waitStart();
+	
 	{
 		
 		AppendFile f(_pidFile);
@@ -212,11 +228,11 @@ void Service::start()
 		f.append(pidnum.c_str(), pidnum.size());
 	}
 	//init log
-
+	
 	_active = true;
 	int ret = run();
 	if(ret == 0 ) {
-		_loop.loop();
+		_loop->loop();
 	}
 
 	alog.stop();
@@ -274,11 +290,12 @@ void Service::version()
 void Service::onReadSignal(Time t)
  {
 	struct signalfd_siginfo fdsi;
+	memset(&fdsi,0,sizeof(fdsi));
 	ssize_t s = read(_signalfd, &fdsi, sizeof(struct signalfd_siginfo));
 	if (s != sizeof(struct signalfd_siginfo)) {
 		LOG_ERROR<<"read signal error size: "<<s
 			<<"should be :"<<sizeof(struct signalfd_siginfo);
-		return ;
+		return stop();
 	}
 	if (fdsi.ssi_signo == SIGINT) {
 		LOG_DEBUG<<"SIGINT signal to stop";
@@ -288,7 +305,8 @@ void Service::onReadSignal(Time t)
 	if (fdsi.ssi_signo == SIGKILL) {
 		LOG_DEBUG<<"kill signal to stop";
 			stop();
-	} 
+	}
+	LOG_WARN<<"recv signal: "<<fdsi.ssi_signo;
 
  }
 }

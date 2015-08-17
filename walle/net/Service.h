@@ -49,21 +49,21 @@ class Service{
         virtual void onReadSignal(Time t);
        
     protected:
-        bool             _isdaemon;
-        bool             _active; 
-        int              _signalfd;
-        string           _workdir;
-        Config           _conf;
+        bool                      _isdaemon;
+        bool                      _active; 
+        int                       _signalfd;
+        string                    _workdir;
+        Config                    _conf;
 
-        string           _confFile;
-        string           _pidFile;
+        string                     _confFile;
+        string                     _pidFile;
 
-        boost::scoped_ptr<Channel> _sigChannel;
-        EventLoop        _loop;
+        boost::scoped_ptr<Channel>  _sigChannel;
+        EventLoop                  *_loop;
         
-        sigset_t         _sigmask;
-        parser           _args;
-        static Service  *_instance;
+        sigset_t                    _sigmask;
+        parser                      _args;
+        static Service             *_instance;
 		
 
         

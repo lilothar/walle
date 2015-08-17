@@ -44,7 +44,10 @@ void gAlogOutput(const char* buff, size_t len)
 Service::Service()
 {
 
-	
+	sigemptyset(&_sigmask);
+	sigaddset(&_sigmask, SIGINT);
+	sigaddset(&_sigmask, SIGQUIT);
+		
 }
 
 Service:: ~Service()
@@ -200,9 +203,6 @@ void Service::start()
 	EventLoop loop;
 	_loop = &loop;
 	
-	sigemptyset(&_sigmask);
-	sigaddset(&_sigmask, SIGINT);
-	sigaddset(&_sigmask, SIGQUIT);
 
 	_signalfd = detail::createSignalfd(-1, &_sigmask);
 	if(_signalfd < 3) {

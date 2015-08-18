@@ -3,8 +3,12 @@
 
 #include <walle/store/common.h>
 #include <walle/store/util.h>
+#include <walle/store/thread.h>
+#include <walle/store/file.h>
 #include <walle/store/compress.h>
 #include <walle/store/compare.h>
+#include <walle/store/map.h>
+#include <walle/store/regex.h>
 #include <walle/store/db.h>
 #include <walle/store/plantdb.h>
 

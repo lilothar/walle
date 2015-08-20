@@ -44,4 +44,4 @@ set(LEVEL_SRC
 	install(TARGETS wallelevel DESTINATION lib)
 	file(GLOB NETHEADERS "*.h")
 	install(FILES ${NETHEADERS} DESTINATION include/walle/wlevel)
-
+add_subdirectory(test)

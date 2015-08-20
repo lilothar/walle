@@ -36,7 +36,7 @@ inline uint32_t Unmask(uint32_t masked_crc) {
   return ((rot >> 17) | (rot << 15));
 }
 
-}  // namespace crc32c
-}  // namespace leveldb
+} 
+} 
 }
-#endif  // STORAGE_LEVELDB_UTIL_CRC32C_H_
+#endif 

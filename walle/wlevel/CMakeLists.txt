@@ -37,11 +37,25 @@ set(LEVEL_SRC
 	write_batch
 )
 
+SET(HEADS
+	c.h
+	cache.h
+	comparator.h
+	db.h
+	env.h
+	filter_policy.h
+	iterator.h
+	options.h
+	slice.h
+	status.h
+	table.h
+	table_builder.h
+	write_batch.h
+)
 
 	add_library(wallelevel ${LEVEL_SRC})
 	target_link_libraries(wallelevel z rt pthread)
 
 	install(TARGETS wallelevel DESTINATION lib)
-	file(GLOB NETHEADERS "*.h")
-	install(FILES ${NETHEADERS} DESTINATION include/walle/wlevel)
+	install(FILES ${HEADS} DESTINATION include/walle/wlevel)
 add_subdirectory(test)

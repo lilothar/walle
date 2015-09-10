@@ -214,13 +214,14 @@ void Service::start()
 	_sigChannel.reset(new Channel(_loop,_signalfd));
 	_sigChannel->setReadCallback(boost::bind(&Service::onReadSignal,this,_1));
 	_sigChannel->enableReading();
-
+	Logger::setLogLevel(_loglevel);
+	/*
 	AsyncLogging alog(_logbase,_rollsize,_interval);
 	detail::g_log =&alog;
 	Logger::setLogLevel(_loglevel);
 	Logger::setOutput(detail::gAlogOutput);
 	alog.waitStart();
-	
+	*/
 	{
 		
 		AppendFile f(_pidFile);

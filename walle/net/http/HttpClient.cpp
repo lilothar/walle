@@ -35,11 +35,9 @@ void HttpClient::start()
 	_client->setMessageCallback(boost::bind(&HttpClient::onMessage,this,_1,_2,_3));
 	_client->setWriteCompleteCallback(boost::bind(&HttpClient::onWriteComplete,this,_1));
 	_client->connect();
-	LOG_ERROR<<"HttpClient::start";
 }
 void HttpClient::stop()
 {
-	LOG_ERROR<<"HttpClient::stop";
 	if(_client) {
 		_client->disconnect();
 	}
@@ -47,7 +45,6 @@ void HttpClient::stop()
 	   
 void HttpClient::setResponseCallback(HttpClientCallback cb)
 {
-	LOG_ERROR<<"HttpClient::setResponseCallback";
 	_onResponse = cb;
 }
 
@@ -55,10 +52,15 @@ void HttpClient::setHttpCloseCallback(HttpClientCallback cb)
 {
 	_onClose = cb;
 }
+void HttpClient::sendqury()
+{
+		string requeststr;
+		_request.toString(requeststr);
+		conn->send(requeststr);
+}
 
 void HttpClient::onConnection(const TcpConnectionPtr& conn)
 {
-	LOG_ERROR<<"HttpClient::onConnection";
 	if(!conn->connected()) {
 		if(_onClose) {
 			_onClose(this);
@@ -66,7 +68,6 @@ void HttpClient::onConnection(const TcpConnectionPtr& conn)
 	} else {
 		string requeststr;
 		_request.toString(requeststr);
-		LOG_ERROR<<requeststr;
 		conn->send(requeststr);
 	
 	}
@@ -78,7 +79,6 @@ void HttpClient::onWriteComplete(const TcpConnectionPtr& conn)
 
 void HttpClient::onMessage(const TcpConnectionPtr& conn, Buffer* buf, Time time)
 {
-	LOG_ERROR<<"HttpClient::onMessage";	
 	const char* str = buf->peek();
 	size_t readablesize = buf->readableBytes();
 	size_t parsedsize = _response.parseResponse(str,readablesize);

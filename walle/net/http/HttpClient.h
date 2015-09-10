@@ -27,6 +27,7 @@ class HttpClient{
        HttpClientResponse& getResponse();
        void start();
        void stop();
+       void sendqury();
        void setResponseCallback(HttpClientCallback cb);
        void setHttpCloseCallback(HttpClientCallback cb);
     private:

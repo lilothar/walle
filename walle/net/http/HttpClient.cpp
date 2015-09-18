@@ -56,7 +56,7 @@ void HttpClient::sendqury()
 {
 		string requeststr;
 		_request.toString(requeststr);
-		conn->send(requeststr);
+		_client->connection()->send(requeststr);
 }
 
 void HttpClient::onConnection(const TcpConnectionPtr& conn)

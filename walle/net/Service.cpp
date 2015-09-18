@@ -236,7 +236,7 @@ void Service::start()
 		_loop->loop();
 	}
 
-	alog.stop();
+	//alog.stop();
 	dispose();
 }
 bool Service::initLogConf()

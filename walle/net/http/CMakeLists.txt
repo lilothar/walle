@@ -1,9 +1,9 @@
 set(http_SRCS
-  Httpserver.cpp
-  Httpresponse.cpp
-  HttpClientRequest.cpp
-  HttpClientResponse.cpp
-  HttpClient.cpp
+  Httpserver
+  Httpresponse
+  HttpClientRequest
+  HttpClientResponse
+  HttpClient
   )
 add_library(wallehttp ${http_SRCS})
 target_link_libraries(wallehttp wallenet wallesys)

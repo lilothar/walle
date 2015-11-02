@@ -1,2 +1,2 @@
-add_executable(simplereader simplewriter.cpp)
-add_executable(simplewriter simplewriter.cpp)
+add_executable(simplereader simplewriter.cc)
+add_executable(simplewriter simplewriter.cc)

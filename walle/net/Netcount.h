@@ -1,5 +1,6 @@
-#ifndef DYLIN_NETCOUNT_H_
-#define DYLIN_NETCOUNT_H_
+#ifndef WALLE_NET_NETCOUNT_H_
+#define WALLE_NET_NETCOUNT_H_
+
 #include <walle/sys/Atomic.h>
 
 namespace walle {

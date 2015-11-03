@@ -1,5 +1,5 @@
-#ifndef DYLIN_PROCESSINFO_H_
-#define DYLIN_PROCESSINFO_H_
+#ifndef WALLE_SYS_PROCESSINFO_H_
+#define WALLE_SYS_PROCESSINFO_H_
 
 #include <walle/sys/Types.h>
 #include <walle/sys/Time.h>

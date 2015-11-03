@@ -1,5 +1,5 @@
-#ifndef DYLIN_URL_H_
-#define DYLIN_URL_H_
+#ifndef WALLE_SYS_URL_H_
+#define WALLE_SYS_URL_H_
 #include <string>
 #include <stdint.h>
 

@@ -1,5 +1,5 @@
-#ifndef DYLIN_SOCKET_H_
-#define DYLIN_SOCKET_H_
+#ifndef WALLE_NET_SOCKET_H_
+#define WALLE_NET_SOCKET_H_
 #include <string>
 #include <walle/sys/Logging.h>
 #include <walle/net/Addrinet.h>

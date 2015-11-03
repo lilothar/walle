@@ -1,5 +1,5 @@
-#ifndef DYLIN_RANDOM_H_
-#define DYLIN_RANDOM_H_
+#ifndef WALLE_SYS_RANDOM_H_
+#define WALLE_SYS_RANDOM_H_
 #include <stdint.h>
 
 namespace walle {

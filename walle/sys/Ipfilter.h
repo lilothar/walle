@@ -1,5 +1,5 @@
-#ifndef DYLIN_IPFILTER_H_
-#define DYLIN_IPFILTER_H_
+#ifndef WALLE_SYS_IPFILTER_H_
+#define WALLE_SYS_IPFILTER_H_
 
 #include <string>
 #include <set>

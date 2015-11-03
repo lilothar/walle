@@ -1,5 +1,5 @@
-#ifndef DYLIN_EVENTLOOPTHREADPOOL_H_
-#define DYLIN_EVENTLOOPTHREADPOOL_H_
+#ifndef WALLE_NET_EVENTLOOPTHREADPOOL_H_
+#define WALLE_NET_EVENTLOOPTHREADPOOL_H_
 
 #include <vector>
 #include <walle/algo/functional.h>

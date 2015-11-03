@@ -1,5 +1,5 @@
-#ifndef DYLIN_CONNECTOR_H_
-#define DYLIN_CONNECTOR_H_
+#ifndef WALLE_NET_CONNECTOR_H_
+#define WALLE_NET_CONNECTOR_H_
 
 #include <walle/net/Addrinet.h>
 

@@ -1,5 +1,5 @@
-#ifndef DYLIN_MD5_H_
-#define DYLIN_MD5_H_
+#ifndef WALLE_SYS_MD5_H_
+#define WALLE_SYS_MD5_H_
 #include <string>
 #include <stdint.h>
 namespace walle {

@@ -1,5 +1,5 @@
-#ifndef DYLIN_HISTOGRAM_H_
-#define DYLIN_HISTOGRAM_H_
+#ifndef WALLE_SYS_HISTOGRAM_H_
+#define WALLE_SYS_HISTOGRAM_H_
 #include <string>
 namespace walle {
 namespace util {

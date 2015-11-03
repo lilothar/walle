@@ -1,5 +1,5 @@
-#ifndef DYLIN_EVENTLOOPTHREAD_H_
-#define DYLIN_EVENTLOOPTHREAD_H_
+#ifndef WALLE_NET_EVENTLOOPTHREAD_H_
+#define WALLE_NET_EVENTLOOPTHREAD_H_
 #include <walle/sys/wallesys.h>
 
 #include <walle/algo/functional.h>

@@ -1,5 +1,5 @@
-#ifndef DYLIN_SLICE_H_
-#define DYLIN_SLICE_H_
+#ifndef WALLE_SYS_SLICE_H_
+#define WALLE_SYS_SLICE_H_
 #include <assert.h>
 #include <stddef.h>
 #include <string.h>

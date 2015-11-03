@@ -192,8 +192,7 @@ void TcpConnection::shutdown()
 {
 	LOG_DEBUG<<"TcpConnection::shutdown";
   // FIXME: use compare and swap
-  if (_state == kConnected)
-  {
+  if (_state == kConnected) {
     setState(kDisconnecting);
     // FIXME: shared_from_this()?
     _loop->runInLoop(std::bind(&TcpConnection::shutdownInLoop, this));

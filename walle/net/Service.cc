@@ -8,6 +8,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
+#include <walle/sys/wallesys.h>
 
 
 using namespace walle::sys;
@@ -161,10 +162,12 @@ void Service::runDaemon()
 	assert( fd == 1 );
 	fd = dup2(1,2);
 	assert( fd == 2 ); 
-
+	UNUSED(fd);
 	_workdir = _conf.getString("global","service_work_dir");
 	if(!_workdir.empty()) {
-		chdir(_workdir.c_str());
+		int ret = chdir(_workdir.c_str());
+		UNUSED(ret);
+		
 	}
 	umask(0);
 	return;	
@@ -195,6 +198,10 @@ void Service::start()
 			exit(0);
 	}
 
+	if(!Filesystem::fileExist(_workdir)) {
+		cout<<"working dir not exist"<<endl;
+		exit(0);
+	}
 
 	if(_isdaemon ) {
 		runDaemon();

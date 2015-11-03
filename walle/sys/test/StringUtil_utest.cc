@@ -4,6 +4,7 @@
 #include <walle/unit/Utest.h>
 #include <walle/sys/wallesys.h>
 #include <string>
+#include <walle/algo/memory.h>
 
 using namespace std;
 
@@ -61,7 +62,7 @@ usage()
 	exit(0);
 }
 
-static auto_ptr<unit::Output>
+static unit::Output*
 cmdline(int argc, char* argv[])
 {
 
@@ -91,7 +92,7 @@ cmdline(int argc, char* argv[])
 		}
 	}
 	
-	return auto_ptr<unit::Output>(output);
+	return output;
 }
 
 int
@@ -102,15 +103,16 @@ main(int argc, char* argv[])
 		// Demonstrates the ability to use multiple test suites
 		//
 		unit::Suite ts;
-		ts.add(auto_ptr<unit::Suite>(new StringUtilUtest));
+		ts.add(new StringUtilUtest);
 		// Run the tests
 		//
-		auto_ptr<unit::Output> output(cmdline(argc, argv));
+		unit::Output*output = cmdline(argc, argv);
 		ts.run(*output, true);
 
-		unit::HtmlOutput* const html = dynamic_cast<unit::HtmlOutput*>(output.get());
+		unit::HtmlOutput* const html = dynamic_cast<unit::HtmlOutput*>(output);
 		if (html)
 			html->generate(cout, true, "MyTest");
+		delete output;
 	}
 	catch (...)
 	{

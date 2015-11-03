@@ -43,9 +43,10 @@ namespace unit
 	}
 
 	void
-	Suite::add(auto_ptr<Suite> suite)
+	Suite::add(Suite *suite)
 	{
-		_suites.push_back(suite.release());
+		assert(suite);
+		_suites.push_back(suite);
 	}
 	
 

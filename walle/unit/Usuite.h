@@ -4,7 +4,6 @@
 #include <list>
 #include <memory>
 #include <string>
-
 #include "Utime.h"
 #include "Usource.h"
 
@@ -18,7 +17,7 @@ namespace unit
 		Suite();
 		virtual ~Suite();
 		
-		void add(std::auto_ptr<Suite> suite);
+		void add(Suite *suite);
 		
 		bool run(Output& output, bool cont_after_fail = true);
 		

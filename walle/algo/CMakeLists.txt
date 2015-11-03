@@ -1,7 +1,3 @@
-	file(GLOB NETHEADERS "*.h")
-	install(FILES ${NETHEADERS} DESTINATION include/walle/algo)
-
-
-		add_subdirectory(test)
-	
-
+file(GLOB HEADERS "*.h") 
+install(FILES ${HEADERS} DESTINATION include/eva/sys)
+add_subdirectory(test) 

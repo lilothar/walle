@@ -1,16 +1,15 @@
-#ifndef DYLIN_CONNECTION_H_
-#define DYLIN_CONNECTION_H_
+#ifndef WALLE_NET_CONNECTION_H_
+#define WALLE_NET_CONNECTION_H_
 
 #include <walle/sys/wallesys.h>
 #include <walle/net/Callback.h>
 #include <walle/net/Buffer.h>
 #include <walle/net/Addrinet.h>
-
-#include <boost/any.hpp>
-#include <boost/enable_shared_from_this.hpp>
-#include <boost/noncopyable.hpp>
-#include <boost/scoped_ptr.hpp>
-#include <boost/shared_ptr.hpp>
+#include <walle/algo/any.h>
+#include <walle/algo/memory.h>
+#include <walle/algo/noncopyable.h>
+#include <walle/algo/scoped_ptr.h>
+#include <walle/net/Bufferedqueue.h>
 
 // struct tcp_info is in <netinet/tcp.h>
 struct tcp_info;
@@ -26,8 +25,8 @@ class Socket;
 /// TCP connection, for both client and server usage.
 ///
 /// This is an interface class, so don't expose too much details.
-class TcpConnection : boost::noncopyable,
-                      public boost::enable_shared_from_this<TcpConnection>
+class TcpConnection : std::noncopyable,
+                      public std::enable_shared_from_this<TcpConnection>
 {
  public:
   /// Constructs a TcpConnection with a connected sockfd
@@ -58,13 +57,13 @@ class TcpConnection : boost::noncopyable,
   void forceCloseWithDelay(int64_t seconds);
   void setTcpNoDelay(bool on);
 
-  void setContext(const boost::any& context)
+  void setContext(const std::any& context)
   { _context = context; }
 
-  const boost::any& getContext() const
+  const std::any& getContext() const
   { return _context; }
 
-  boost::any* getMutableContext()
+  std::any* getMutableContext()
   { return &_context; }
 
   void setConnectionCallback(const ConnectionCallback& cb)
@@ -105,6 +104,7 @@ highWaterMark)
   // void sendInLoop(string&& message);
   void sendInLoop(const StringPice& message);
   void sendInLoop(const void* message, size_t len);
+  void sendQueueInLoop();
   void shutdownInLoop();
   // void shutdownAndForceCloseInLoop(double seconds);
   void forceCloseInLoop();
@@ -113,8 +113,8 @@ highWaterMark)
   EventLoop*                 _loop;
   const string               _name;
   StateE                     _state; 
-  boost::scoped_ptr<Socket>  _socket;
-  boost::scoped_ptr<Channel> _channel;
+  std::scoped_ptr<Socket>    _socket;
+  std::scoped_ptr<Channel>   _channel;
   ConnectionCallback         _connectionCallback;
   MessageCallback            _messageCallback;
   WriteCompleteCallback      _writeCompleteCallback;
@@ -122,13 +122,14 @@ highWaterMark)
   CloseCallback              _closeCallback;
   Buffer                     _inputBuffer;
   Buffer                     _outputBuffer;
-  boost::any                 _context;
+  std::any                   _context;
   AddrInet                   _localAddr;
   AddrInet                   _peerAddr;
   size_t                     _highWaterMark;
+  BufferedQueue              _OutBuffers;
 };
 
-typedef boost::shared_ptr<TcpConnection> TcpConnectionPtr;
+typedef std::shared_ptr<TcpConnection> TcpConnectionPtr;
 
 
 }

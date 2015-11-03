@@ -1,10 +1,10 @@
-#ifndef WALLE_BLOCKQUEUE_H_
-#define WALLE_BLOCKQUEUE_H_
+#ifndef WALLE_NET_BLOCKQUEUE_H_
+#define WALLE_NET_BLOCKQUEUE_H_
 
 #include <walle/sys/Cond.h>
 #include <walle/sys/Mutex.h>
 #include <walle/sys/ScopeLock.h>
-#include <boost/noncopyable.hpp>
+#include <walle/algo/noncopyable.h>
 #include <deque>
 #include <assert.h>
 
@@ -13,7 +13,7 @@ namespace sys {
 
 template<typename T>
     
-class BlockQueue : boost::noncopyable
+class BlockQueue : std::noncopyable
 {
  public:
   BlockQueue()

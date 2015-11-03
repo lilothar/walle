@@ -2,8 +2,6 @@
 
 #include <walle/net/Eventloop.h>
 
-#include <boost/bind.hpp>
-
 using namespace walle::sys;
 
 namespace walle {

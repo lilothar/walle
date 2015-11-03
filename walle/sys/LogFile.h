@@ -4,7 +4,7 @@
 #include <walle/sys/AppendFile.h>
 #include <walle/sys/Time.h>
 #include <walle/sys/Mutex.h>
-#include <boost/scoped_ptr.hpp>
+#include <walle/algo/scoped_ptr.h>
 
 
 using std::string;
@@ -34,10 +34,10 @@ class LogFile{
     const int    _checkN;
     int          _count;
 
-    boost::scoped_ptr<Mutex> _mutex;
+    std::scoped_ptr<Mutex> _mutex;
     Time                    _lastroll;
     Time                    _lastflush;
-    boost::scoped_ptr<AppendFile> _file;
+    std::scoped_ptr<AppendFile> _file;
     
         
 };

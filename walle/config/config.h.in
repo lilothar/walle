@@ -1,0 +1,19 @@
+#ifndef WALLE_CONFIG_CONFIG_H_
+#define WALLE_CONFIG_CONFIG_H_
+
+#define PROJECT_VERSION_MAJOR @PROJECT_VERSION_MAJOR@
+#define PROJECT_VERSION_MINOR @PROJECT_VERSION_MINOR@
+
+#define SYSTEM_BIGEND         @SYSTEM_BIGEND@
+
+#cmakedefine STD_CXX11
+
+#cmakedefine WALLE_DEBUG
+
+#define SYSTEM_NAME "@SYSTEM_NAME@"
+
+#ifndef STD_CXX11
+#define nullptr NULL
+#endif
+
+#endif

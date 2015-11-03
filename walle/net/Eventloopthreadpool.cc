@@ -1,9 +1,7 @@
 #include <walle/net/Eventloopthreadpool.h>
-
 #include <walle/net/Eventloop.h>
 #include <walle/net/Eventloopthread.h>
-
-#include <boost/bind.hpp>
+#include <walle/algo/functional.h>
 
 using namespace walle::sys;
 namespace walle {
@@ -20,6 +18,12 @@ EventLoopThreadPool::EventLoopThreadPool(EventLoop* baseLoop)
 EventLoopThreadPool::~EventLoopThreadPool()
 {
   // Don't delete loop, it's stack variable
+  if(_started) {
+		for(size_t i =0; i < _threads.size(); i++) {
+			delete _threads[i];
+			_threads[i] = NULL;
+		}
+  }
 }
 
 void EventLoopThreadPool::start(const ThreadInitCallback& cb)

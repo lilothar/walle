@@ -1,15 +1,15 @@
-#ifndef WALLE_TCPSERVER_H_
-#define WALLE_TCPSERVER_H_
+#ifndef WALLE_NET_TCPSERVER_H_
+#define WALLE_NET_TCPSERVER_H_
 
 #include <walle/sys/Atomic.h>
 #include <walle/net/TcpConnection.h>
-#include <boost/function.hpp>
+#include <walle/algo/functional.h>
 #include <tr1/unordered_map>
 
 #include <map>
-#include <boost/noncopyable.hpp>
-#include <boost/scoped_ptr.hpp>
-#include <boost/shared_ptr.hpp>
+#include <walle/algo/noncopyable.h>
+#include <walle/algo/scoped_ptr.h>
+#include <walle/algo/memory.h>
 #include <walle/net/Addrinet.h>
 #include <string>
 #include <walle/net/Callback.h>
@@ -25,10 +25,10 @@ class EventLoopThreadPool;
 /// TCP server, supports single-threaded and thread-pool models.
 ///
 /// This is an interface class, so don't expose too much details.
-class TcpServer : boost::noncopyable
+class TcpServer : std::noncopyable
 {
  public:
-  typedef boost::function<void(EventLoop*)> ThreadInitCallback;
+  typedef std::function<void(EventLoop*)> ThreadInitCallback;
   enum Option
   {
     kNoReusePort,
@@ -60,7 +60,7 @@ class TcpServer : boost::noncopyable
   void setThreadInitCallback(const ThreadInitCallback& cb)
   { _threadInitCallback = cb; }
   /// valid after calling start()
-  boost::shared_ptr<EventLoopThreadPool> threadPool()
+  std::shared_ptr<EventLoopThreadPool> threadPool()
   { return _threadPool; }
 
   /// Starts the server if it's not listenning.
@@ -96,8 +96,8 @@ class TcpServer : boost::noncopyable
   EventLoop*                             _loop;  // the acceptor loop
   const string                           _hostport;
   const string                           _name;
-  boost::scoped_ptr<Acceptor>            _acceptor; // avoid revealing Acceptor
-  boost::shared_ptr<EventLoopThreadPool> _threadPool;
+  std::scoped_ptr<Acceptor>              _acceptor; // avoid revealing Acceptor
+  std::shared_ptr<EventLoopThreadPool>   _threadPool;
   ConnectionCallback                     _connectionCallback;
   MessageCallback                        _messageCallback;
   WriteCompleteCallback                  _writeCompleteCallback;

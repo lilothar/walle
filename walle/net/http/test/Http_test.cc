@@ -76,7 +76,7 @@ int main(int argc, char* argv[])
 	walle::sys::Logger::setLogLevel(walle::sys::Logger::WARN);
   }
   EventLoop loop;
-  AddrInet Addr("localhost:8080");
+  AddrInet Addr("0.0.0.0:19000");
   HttpServer server(&loop, Addr, "walle");
   server.setHttpCallback(onRequest);
   server.setThreadNum(numThreads);

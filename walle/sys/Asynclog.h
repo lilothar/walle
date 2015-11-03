@@ -5,16 +5,15 @@
 #include <walle/sys/CountDown.h>
 #include <walle/sys/Mutex.h>
 #include <walle/sys/Thread.h>
-
-#include <boost/bind.hpp>
-#include <boost/noncopyable.hpp>
+#include <walle/algo/functional.h>
+#include <walle/algo/noncopyable.h>
 #include <vector>
 
 namespace walle {
 namespace sys{
 
 class LogFile;
-class AsyncLogging :public Thread
+class AsyncLogging :public Thread,std::noncopyable
 {
  public:
 

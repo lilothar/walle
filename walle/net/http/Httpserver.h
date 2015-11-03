@@ -5,6 +5,9 @@
 #include <walle/net/Addrinet.h>
 #include <walle/sys/Time.h>
 #include <walle/net/Buffer.h>
+#include <walle/algo/functional.h>
+#include <walle/algo/noncopyable.h>
+
 
 using namespace walle::sys;
 using namespace walle::net;
@@ -14,10 +17,10 @@ namespace http {
 class HttpRequest;
 class HttpResponse;
 
-class HttpServer : boost::noncopyable
+class HttpServer : std::noncopyable
 {
  public:
-  typedef boost::function<void (const HttpRequest&,
+  typedef std::function<void (const HttpRequest&,
                                 HttpResponse*)> HttpCallback;
 
   HttpServer(EventLoop* loop,

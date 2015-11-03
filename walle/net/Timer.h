@@ -1,5 +1,5 @@
-#ifndef WALLE_TIMER_H_
-#define WALLE_TIMER_H_
+#ifndef WALLE_NET_TIMER_H_
+#define WALLE_NET_TIMER_H_
 
 #include <set>
 #include <vector>

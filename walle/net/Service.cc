@@ -212,7 +212,7 @@ void Service::start()
 	
 	LOG_INFO<<"signal fd : "<<_signalfd;
 	_sigChannel.reset(new Channel(_loop,_signalfd));
-	_sigChannel->setReadCallback(boost::bind(&Service::onReadSignal,this,_1));
+	_sigChannel->setReadCallback(std::bind(&Service::onReadSignal,this,std::_1));
 	_sigChannel->enableReading();
 	Logger::setLogLevel(_loglevel);
 	/*

@@ -1,49 +1,36 @@
+#ifndef WALLE_ALGO_FUNCTIONAL_H_
+#define WALLE_ALGO_FUNCTIONAL_H_
+#include <walle/config/config.h>
 
-#ifndef WALLE_FUNCTIONAL_H__
-#define WALLE_FUNCTIONAL_H__
-
-#include "pair.h"
-
-namespace walle {
-namespace algorithm{
-
-template<class Arg, class Result>
-struct unary_function {
-    typedef Arg argument_type;
-    typedef Result result_type;
-};
-
-template<class Arg1, class Arg2, class Result>
-struct binary_function {
-    typedef Arg1 first_argument_type;
-    typedef Arg2 second_argument_type;
-    typedef Result result_type;
-};
-
-template<class T>
-struct equal_to : public binary_function<T, T, bool> {
-    bool operator()(const T& a, const T& b) const {
-        return a == b;
+#ifndef STD_CXX11
+    #include <tr1/functional>
+    namespace std{
+        using std::tr1::function;
+        using std::tr1::bind;
+        using std::tr1::placeholders::_1;
+        using std::tr1::placeholders::_2;
+        using std::tr1::placeholders::_3;
+        using std::tr1::placeholders::_4;
+        using std::tr1::placeholders::_5;
+        using std::tr1::placeholders::_6;
+        using std::tr1::placeholders::_7;
+        using std::tr1::placeholders::_8;
+        
     }
-};
 
-template<class T>
-struct identity : public unary_function<T, T> {
-    const T& operator()(const T& x) const { return x; }
-};
-
-template<class Pair>
-struct select1st : public unary_function<Pair, typename Pair::first_type> {
-    const typename Pair::first_type operator()(const Pair& x) const { return x.first; }
-};
-
-template<class T>
-struct less : public binary_function<T, T, bool> {
-    bool operator()(const T& x, const T& y) {
-        return x < y;
+#else 
+    #include <functional>
+    namespace std{
+    using std::placeholders::_1;
+    using std::placeholders::_2;
+    using std::placeholders::_3;
+    using std::placeholders::_4;
+    using std::placeholders::_5;
+    using std::placeholders::_6;
+    using std::placeholders::_7;
+    using std::placeholders::_8;
+         
     }
-};
-}
-}
 #endif
 
+#endif

@@ -1,5 +1,5 @@
-#include <walle/sys/wallesys.h>
-
+#include <walle/sys/Logging.h>
+#include <walle/sys/LocalThread.h>
 #include <errno.h>
 #include <stdio.h>
 #include <string.h>
@@ -20,12 +20,13 @@ const char* strerror_tl(int savedErrno)
 
 Logger::LogLevel initLogLevel()
 {
-  if (::getenv("WALLE_LOG_TRACE"))
-    return Logger::TRACE;
-  else if (::getenv("WALLE_LOG_DEBUG"))
+  if (::getenv("WALLE_LOG_TRACE")) {
+   	 return Logger::TRACE;
+  } else if (::getenv("WALLE_LOG_DEBUG")) {
     return Logger::DEBUG;
-  else
+  } else {
     return Logger::INFO;
+  }
 }
 
 Logger::LogLevel g_logLevel = initLogLevel();

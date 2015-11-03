@@ -1,7 +1,7 @@
-#ifndef DYLIN_TCPCLIENT_H_
-#define DYLIN_TCPCLIENT_H_
-#include <boost/noncopyable.hpp>
-
+#ifndef WALLE_NET_TCPCLIENT_H_
+#define WALLE_NET_TCPCLIENT_H_
+#include <walle/algo/noncopyable.h>
+#include <walle/algo/memory.h>
 #include <walle/sys/Mutex.h>
 #include <walle/net/TcpConnection.h>
 #include <walle/net/Addrinet.h>
@@ -10,9 +10,9 @@ namespace walle {
 namespace net{
 
 class Connector;
-typedef boost::shared_ptr<Connector> ConnectorPtr;
+typedef std::shared_ptr<Connector> ConnectorPtr;
 
-class TcpClient : boost::noncopyable
+class TcpClient : std::noncopyable
 {
  public:
   TcpClient(EventLoop* loop,

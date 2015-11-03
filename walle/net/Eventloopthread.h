@@ -2,8 +2,8 @@
 #define DYLIN_EVENTLOOPTHREAD_H_
 #include <walle/sys/wallesys.h>
 
-#include <boost/function.hpp>
-#include <boost/noncopyable.hpp>
+#include <walle/algo/functional.h>
+#include <walle/algo//noncopyable.h>
 using namespace walle::sys;
 namespace walle {
 namespace net{
@@ -13,7 +13,7 @@ class EventLoop;
 class EventLoopThread : public Thread
 {
  public:
-  typedef boost::function<void(EventLoop*)> ThreadInitCallback;
+  typedef std::function<void(EventLoop*)> ThreadInitCallback;
 
   EventLoopThread(const ThreadInitCallback& cb = ThreadInitCallback());
   ~EventLoopThread();

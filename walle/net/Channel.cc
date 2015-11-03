@@ -51,7 +51,7 @@ Channel::~Channel()
   }
 }
 
-void Channel::tie(const boost::shared_ptr<void>& obj)
+void Channel::tie(const std::shared_ptr<void>& obj)
 {
   _tie = obj;
   _tied = true;
@@ -73,7 +73,7 @@ void Channel::remove()
 void Channel::handleEvent(Time receiveTime)
 {
 
-  boost::shared_ptr<void> guard;
+  std::shared_ptr<void> guard;
   if (_tied)
   {
     guard = _tie.lock();

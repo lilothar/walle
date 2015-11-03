@@ -1,7 +1,7 @@
-#ifndef DYLIN_LOGGING_H_
-#define DYLIN_LOGGING_H_
-#include "LogStream.h"
-#include "Time.h"
+#ifndef WALLE_SYS_LOGGING_H_
+#define WALLE_SYS_LOGGING_H_
+#include <walle/sys/LogStream.h>
+#include <walle/sys/Time.h>
 #if defined(__clang__)
     #pragma clang diagnostic ignored "-Wtautological-compare"
 #else
@@ -15,15 +15,14 @@ namespace sys {
 class Logger
 {
  public:
-  enum LogLevel
-  {
+  enum LogLevel {
     TRACE,
     DEBUG,
     INFO,
     WARN,
     ERROR,
     FATAL,
-    NUM_LOG_LEVELS,
+    NUM_LOG_LEVELS
   };
 
   class SourceFile

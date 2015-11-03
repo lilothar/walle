@@ -6,7 +6,7 @@
 #include <walle/net/Eventloopthreadpool.h>
 #include <walle/net/Socket.h>
 
-#include <boost/bind.hpp>
+#include <walle/algo/functional.h>
 
 #include <stdio.h>  // snprintf
 
@@ -28,7 +28,7 @@ TcpServer::TcpServer(EventLoop* loop,
     _nextConnId(1)
 {
   _acceptor->setNewConnectionCallback(
-      boost::bind(&TcpServer::newConnection, this, _1, _2));
+      std::bind(&TcpServer::newConnection, this, std::_1, std::_2));
 }
 
 TcpServer::~TcpServer()
@@ -41,7 +41,7 @@ TcpServer::~TcpServer()
     TcpConnectionPtr conn = it->second;
     it->second.reset();
     conn->getLoop()->runInLoop(
-      boost::bind(&TcpConnection::connectDestroyed, conn));
+      std::bind(&TcpConnection::connectDestroyed, conn));
     conn.reset();
   }
 }
@@ -60,7 +60,7 @@ void TcpServer::start()
 
     assert(!_acceptor->listenning());
     _loop->runInLoop(
-        boost::bind(&Acceptor::listen, get_pointer(_acceptor)));
+        std::bind(&Acceptor::listen, get_pointer(_acceptor)));
   }
 }
 
@@ -85,14 +85,14 @@ void TcpServer::newConnection(int sockfd, const AddrInet& peerAddr)
   conn->setMessageCallback(_messageCallback);
   conn->setWriteCompleteCallback(_writeCompleteCallback);
   conn->setCloseCallback(
-      boost::bind(&TcpServer::removeConnection, this, _1)); 
-  ioLoop->runInLoop(boost::bind(&TcpConnection::connectEstablished, conn));
+      std::bind(&TcpServer::removeConnection, this, std::_1)); 
+  ioLoop->runInLoop(std::bind(&TcpConnection::connectEstablished, conn));
 }
 
 void TcpServer::removeConnection(const TcpConnectionPtr& conn)
 {
 
-  _loop->runInLoop(boost::bind(&TcpServer::removeConnectionInLoop, this, conn)
+  _loop->runInLoop(std::bind(&TcpServer::removeConnectionInLoop, this, conn)
 );
 }
 
@@ -104,7 +104,7 @@ void TcpServer::removeConnectionInLoop(const TcpConnectionPtr& conn)
   assert(n == 1);
   EventLoop* ioLoop = conn->getLoop();
   ioLoop->queueInLoop(
-      boost::bind(&TcpConnection::connectDestroyed, conn));
+      std::bind(&TcpConnection::connectDestroyed, conn));
 }
 }
 }

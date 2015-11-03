@@ -88,6 +88,7 @@ bool Socket::bind( AddrInet& addr)
 {
 	int ret;
 	if (!checkSocketHandle()) {
+		LOG_ERROR<<"create socket error errno: "<<errno;
 		return false;
 	}
 	 struct sockaddr* serveraddr = ( struct sockaddr*)addr.getAddr();

@@ -2,8 +2,6 @@
 #include <walle/net/Eventloopthread.h>
 #include <walle/net/Tcpclient.h>
 
-#include <boost/bind.hpp>
-
 using namespace walle::sys;
 using namespace walle::net;
 

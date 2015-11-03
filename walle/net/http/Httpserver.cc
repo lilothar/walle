@@ -7,7 +7,6 @@
 #include <walle/net/http/Httpresponse.h>
 #include <walle/sys/Logging.h>
 
-#include <boost/bind.hpp>
 
 using namespace walle::net;
 using namespace walle::sys;
@@ -155,9 +154,9 @@ HttpServer::HttpServer(EventLoop* loop,
     _httpCallback(detail::defaultHttpCallback)
 {
   _server.setConnectionCallback(
-      boost::bind(&HttpServer::onConnection, this, _1));
+      std::bind(&HttpServer::onConnection, this, std::_1));
   _server.setMessageCallback(
-      boost::bind(&HttpServer::onMessage, this, _1, _2, _3));
+      std::bind(&HttpServer::onMessage, this, std::_1, std::_2, std::_3));
 }
 
 HttpServer::~HttpServer()
@@ -174,7 +173,7 @@ void HttpServer::onConnection(const TcpConnectionPtr& conn)
   if (conn->connected())
   {
     conn->setContext(HttpContext());
-	 HttpContext* context = boost::any_cast<HttpContext>(conn->getMutableContext());
+	 HttpContext* context = std::any_cast<HttpContext>(conn->getMutableContext());
 	 string addr = conn->peerAddress().toString();
 	 context->request().setClientIp(addr);
   }
@@ -184,7 +183,7 @@ void HttpServer::onMessage(const TcpConnectionPtr& conn,
                            Buffer* buf,
                            Time receiveTime)
 {
-  HttpContext* context = boost::any_cast<HttpContext>(conn->getMutableContext());
+  HttpContext* context = std::any_cast<HttpContext>(conn->getMutableContext());
 
   if (!detail::parseRequest(buf, context, receiveTime))
   {

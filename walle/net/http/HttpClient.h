@@ -4,7 +4,7 @@
 #include <walle/sys/wallesys.h>
 #include <walle/net/http/HttpClientRequest.h>
 #include <walle/net/http/HttpClientResponse.h>
-#include <boost/function.hpp>
+#include <walle/algo/functional.h>
 
 
 using namespace walle::net;
@@ -16,7 +16,7 @@ namespace http {
 
 class HttpClient;
 
-typedef boost::function<void(HttpClient*)> HttpClientCallback; 
+typedef std::function<void(HttpClient*)> HttpClientCallback; 
   
 
 class HttpClient{

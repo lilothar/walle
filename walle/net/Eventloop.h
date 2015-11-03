@@ -1,10 +1,10 @@
-#ifndef DYLIN_EVENTLOOP_H_
-#define DYLIN_EVENTLOOP_H_
+#ifndef WALLE_NET_EVENTLOOP_H_
+#define WALLE_NET_EVENTLOOP_H_
 #include <vector>
 
-#include <boost/function.hpp>
-#include <boost/noncopyable.hpp>
-#include <boost/scoped_ptr.hpp>
+#include <walle/algo/functional.h>
+#include <walle/algo/noncopyable.h>
+#include <walle/algo/scoped_ptr.h>
 
 #include <walle/sys/wallesys.h>
 #include <walle/net/Callback.h>
@@ -25,7 +25,7 @@ class Timer;
 class EventLoop
 {
  public:
-  typedef boost::function<void()> Functor;
+  typedef std::function<void()> Functor;
 
   EventLoop();
   ~EventLoop();  // force out-line dtor, for scoped_ptr members.
@@ -119,12 +119,12 @@ class EventLoop
   int64_t                   _iteration;
   const pthread_t           _threadId;
   Time                      _pollReturnTime;
-  boost::scoped_ptr<Poller> _poller;
-  boost::scoped_ptr<Timer>  _timer;
+  std::scoped_ptr<Poller>   _poller;
+  std::scoped_ptr<Timer>    _timer;
   int                       _wakeupFd;
   // unlike in TimerQueue, which is an internal class,
   // we don't expose Channel to client.
-  boost::scoped_ptr<Channel> _wakeupChannel;
+  std::scoped_ptr<Channel>  _wakeupChannel;
   ChannelList                _activeChannels;
   Channel                   *_currentActiveChannel;
   Mutex                      _mutex;

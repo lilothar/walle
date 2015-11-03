@@ -3,8 +3,6 @@
 
 #include <tr1/unordered_map>
 #include <vector>
-#include <boost/noncopyable.hpp>
-
 #include <walle/sys/Time.h>
 #include <walle/net/Eventloop.h>
 

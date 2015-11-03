@@ -2,16 +2,13 @@
 #define WALLE_SERVICE_H_
 #include <walle/sys/wallesys.h>
 #include <string>
-#include <boost/scoped_ptr.hpp>
-#include <boost/bind.hpp>
-
-#include <boost/enable_shared_from_this.hpp>
-#include <boost/shared_ptr.hpp>
 #include <walle/net/Eventloop.h>
 #include <walle/net/Channel.h>
 #include <signal.h>
 #include <sys/signalfd.h>
 #include <walle/sys/wallesys.h>
+#include <walle/algo/memory.h>
+#include <walle/algo/functional.h>
 
 using namespace walle::sys;
 
@@ -58,7 +55,7 @@ class Service{
         string                     _confFile;
         string                     _pidFile;
 
-        boost::scoped_ptr<Channel>  _sigChannel;
+        std::scoped_ptr<Channel>  _sigChannel;
         EventLoop                  *_loop;
         
         sigset_t                    _sigmask;

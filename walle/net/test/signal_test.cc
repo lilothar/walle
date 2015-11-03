@@ -1,6 +1,6 @@
 #include <walle/net/wallenet.h>
 #include <walle/sys/wallesys.h>
-#include <boost/bind.hpp>
+#include <walle/algo/functional.h>
 
 using namespace walle::net;
 using namespace walle::sys;
@@ -52,7 +52,7 @@ int main()
 	sfd = createSignalfd(-1,&mymask);
 	EventLoop loop;
 	Channel   c(&loop,sfd);
-	c.setReadCallback(boost::bind(handread,_1));
+	c.setReadCallback(std::bind(handread,std::_1));
 	c.enableReading();
 	loop.loop();
 }

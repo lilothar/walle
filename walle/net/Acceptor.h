@@ -1,8 +1,8 @@
-#ifndef DYLIN_ACCEPTOR_H_
-#define DYLIN_ACCEPTOR_H_
-#include <boost/function.hpp>
-#include <boost/noncopyable.hpp>
+#ifndef WALLE_NET_ACCEPTOR_H_
+#define WALLE_NET_ACCEPTOR_H_
 
+#include <walle/algo/functional.h>
+#include <walle/algo/noncopyable.h>
 #include <walle/net/Channel.h>
 #include <walle/net/Socket.h>
 
@@ -12,10 +12,10 @@ namespace net {
 class EventLoop;
 class AddrInet;
 
-class Acceptor : boost::noncopyable
+class Acceptor : std::noncopyable
 {
  public:
-  typedef boost::function<void (int sockfd,
+  typedef std::function<void (int sockfd,
                                  AddrInet&)> NewConnectionCallback;
 
   Acceptor(EventLoop* loop,  AddrInet& listenAddr, bool reuseport );

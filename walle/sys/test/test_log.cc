@@ -1,4 +1,4 @@
-#include <walle/sys/wallesys.h>
+#include <walle/sys/Logging.h>
 
 int main()
 {

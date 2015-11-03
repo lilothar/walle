@@ -4,7 +4,6 @@
 #include <walle/net/Timer.h>
 #include <walle/net/TimerId.h>
 #include <stdint.h>
-#include <boost/bind.hpp>
 
 #include <sys/timerfd.h>
 using namespace walle::sys; 
@@ -75,7 +74,7 @@ Timer::Timer(EventLoop* loop)
     _callingExpiredTasks(false)
 {
   _timerfdChannel.setReadCallback(
-      boost::bind(&Timer::handleRead, this));
+      std::bind(&Timer::handleRead, this));
   // we are always reading the timerfd, we disarm it with timerfd_settime.
   _timerfdChannel.enableReading();
 }
@@ -98,14 +97,14 @@ TimerId Timer::addTimer(const TimerCallback& cb,
                              int64_t interval)
 {
   TimerTask* task = new TimerTask(cb, when, interval);
-  _loop->runInLoop( boost::bind(&Timer::addTimerInLoop, this, task));
+  _loop->runInLoop( std::bind(&Timer::addTimerInLoop, this, task));
   return TimerId(task, task->sequence());
 }
 
 void Timer::cancel(TimerId timerId)
 {
   _loop->runInLoop(
-      boost::bind(&Timer::cancelInLoop, this, timerId));
+      std::bind(&Timer::cancelInLoop, this, timerId));
 }
 
 void Timer::addTimerInLoop(TimerTask* task)

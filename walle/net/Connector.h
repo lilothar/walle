@@ -3,10 +3,10 @@
 
 #include <walle/net/Addrinet.h>
 
-#include <boost/enable_shared_from_this.hpp>
-#include <boost/function.hpp>
-#include <boost/noncopyable.hpp>
-#include <boost/scoped_ptr.hpp>
+#include <walle/algo/memory.h>
+#include <walle/algo/functional.h>
+#include <walle/algo/noncopyable.h>
+#include <walle/algo/scoped_ptr.h>
 #include <walle/net/Socket.h>
 namespace walle {
 namespace net {
@@ -14,11 +14,10 @@ namespace net {
 class Channel;
 class EventLoop;
 
-class Connector : boost::noncopyable,
-                  public boost::enable_shared_from_this<Connector>
+class Connector : std::noncopyable,public std::enable_shared_from_this<Connector>
 {
  public:
-  typedef boost::function<void (int sockfd)> NewConnectionCallback;
+  typedef std::function<void (int sockfd)> NewConnectionCallback;
 
   Connector(EventLoop* loop, const AddrInet& serverAddr);
   ~Connector();
@@ -52,7 +51,7 @@ class Connector : boost::noncopyable,
   AddrInet                   _serverAddr;
   bool                       _connect; // atomic
   States                     _state;  // FIXME: use atomic variable
-  boost::scoped_ptr<Channel> _channel;
+  std::scoped_ptr<Channel>   _channel;
   NewConnectionCallback      _newConnectionCallback;
   int                        _retryDelayMs;
 };

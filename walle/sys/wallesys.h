@@ -1,5 +1,5 @@
-#ifndef WALLE_SYS_H_
-#define WALLE_SYS_H_
+#ifndef WALLE_SYS_WALLESYS_H_
+#define WALLE_SYS_WALLESYS_H_
 #include <assert.h>
 #include <errno.h>
 #include <pthread.h>

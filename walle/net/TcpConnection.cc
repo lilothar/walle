@@ -58,6 +58,12 @@ TcpConnection::~TcpConnection()
 {
   LOG_DEBUG<<"TcpConnection::disconnect[ "<<_name<<" ] at fd="<<_channel->fd();
   assert(_state == kDisconnected);
+  Buffer *buff = _OutBuffers.take();
+  while(buff) {
+	delete buff;
+	buff = nullptr;
+	buff = _OutBuffers.take();
+  }
   
 }
 

@@ -5,11 +5,11 @@
 #include <walle/net/Callback.h>
 #include <walle/net/Buffer.h>
 #include <walle/net/Addrinet.h>
+
 #include <walle/algo/any.h>
-#include <walle/algo/memory.h>
 #include <walle/algo/noncopyable.h>
-#include <walle/algo/scoped_ptr.h>
-#include <walle/net/Bufferedqueue.h>
+#include <walle/algo/memory.h>
+
 
 // struct tcp_info is in <netinet/tcp.h>
 struct tcp_info;
@@ -104,7 +104,7 @@ highWaterMark)
   // void sendInLoop(string&& message);
   void sendInLoop(const StringPice& message);
   void sendInLoop(const void* message, size_t len);
-  void sendQueueInLoop();
+  void sendPiceInLoop(const StringPice& message);
   void shutdownInLoop();
   // void shutdownAndForceCloseInLoop(double seconds);
   void forceCloseInLoop();
@@ -126,7 +126,6 @@ highWaterMark)
   AddrInet                   _localAddr;
   AddrInet                   _peerAddr;
   size_t                     _highWaterMark;
-  BufferedQueue              _OutBuffers;
 };
 
 typedef std::shared_ptr<TcpConnection> TcpConnectionPtr;

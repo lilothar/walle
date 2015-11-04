@@ -76,6 +76,12 @@ message(STATUS "program build type " ${CMAKE_BUILD_TYPE})
 
 #build type end 
 
+# install prefix start
+if(PREFIX)	
+	set(CMAKE_INSTALL_PREFIX ${PREFIX})
+endif(PREFIX)
+message(STATUS "program will be install to " ${CMAKE_INSTALL_PREFIX})
+# install prefix end
 message(STATUS "create config file") 
 #init config start 
 add_subdirectory(walle/config) 
@@ -94,6 +100,4 @@ add_subdirectory(walle/sys)
 add_subdirectory(walle/net)
 add_subdirectory(walle/unit)
 add_subdirectory(walle/ext)
-#add_subdirectory(walle/algo)
-#add_subdirectory(walle/store)
-#add_subdirectory(walle/wlevel)
+add_subdirectory(walle/algo)

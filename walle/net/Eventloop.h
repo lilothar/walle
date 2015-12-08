@@ -9,6 +9,7 @@
 #include <walle/sys/wallesys.h>
 #include <walle/net/Callback.h>
 #include <walle/net/TimerId.h>
+#include <walle/net/TimerWheel.h>
 #include <stdint.h>
 
 using namespace walle::sys;
@@ -81,6 +82,8 @@ class EventLoop
   /// Cancels the timer.
   /// Safe to call from other threads.
   ///
+  TimerWheelHander runAfterSec(int64_t sec, const TimerCallback& cb);
+  TimerWheelHander runEverySec(int64_t sec, const TimerCallback& cb);
   void cancel(TimerId timerId);
 
   // internal usage
@@ -129,6 +132,7 @@ class EventLoop
   Channel                   *_currentActiveChannel;
   Mutex                      _mutex;
   std::vector<Functor>       _pendingFunctors; // @GuardedBy mutex_
+  TimerWheel                 _wheel;
 };
 }
 

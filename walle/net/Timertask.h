@@ -28,6 +28,8 @@ class TimerTask {
 
   void restart(const Time &now);
 
+  int64_t step() const { return _interval; }
+  
   static int64_t numCreated() { return _gTimerNum.get(); }
 
  private:

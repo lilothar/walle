@@ -49,7 +49,10 @@ TcpConnection::TcpConnection(EventLoop* loop,
                              int sockfd,
                              const AddrInet& localAddr,
                              const AddrInet& peerAddr)
-  : _loop(loop),
+  : 
+  	_lastactive(Time::now()),
+  	_timerOutSec(0),
+  	_loop(loop),
     _name(nameArg),
     _state(kConnecting),
     _socket(new Socket(true)),
@@ -78,6 +81,30 @@ TcpConnection::~TcpConnection()
   assert(_state == kDisconnected);
   
 }
+
+void TcpConnection::enableTimerOut(int64_t secs) 
+{
+	if(_timerWheelHandler.valid()) {
+		_timerWheelHandler.release();
+	}
+	_timerWheelHandler = _loop->runEverySec(secs,std::bind(&TcpConnection::onTimerOut,this));
+}
+
+void TcpConnection::disableTimerOut() 
+{
+	_timerWheelHandler.release();
+}
+
+void TcpConnection::onTimerOut()
+{
+
+	Time now = Time::now();
+	Time diff = now - _lastactive;
+	if(diff.toSeconds() >= _timerOutSec) {
+		forceCloseInLoop();
+	}
+}
+
 
 bool TcpConnection::getTcpInfo(struct tcp_info* tcpi) const
 {
@@ -162,6 +189,7 @@ void TcpConnection::sendInLoop(const void* data, size_t len)
     LOG_WARN<<"disconnected, give up writing";
     return;
   }
+  	_lastactive = Time::now();
   // if no thing in output queue, try writing directly
   if (!_channel->isWriting() && _outputBuffer.readableBytes() == 0)
   {
@@ -307,6 +335,7 @@ void TcpConnection::handleRead(Time receiveTime)
 
   _loop->assertInLoopThread();
   int savedErrno = 0;
+  	_lastactive = Time::now();
   ssize_t n = _inputBuffer.readFd(_channel->fd(), &savedErrno);
   if (n > 0)
   {
@@ -331,6 +360,7 @@ void TcpConnection::handleWrite()
   _loop->assertInLoopThread();
   if (_channel->isWriting())
   {
+  	_lastactive = Time::now();
     ssize_t n = ::write(_channel->fd(),
                                _outputBuffer.peek(),
                                _outputBuffer.readableBytes());

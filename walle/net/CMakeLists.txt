@@ -16,6 +16,7 @@ set(NETSRC
 	Timer
 	Timertask
 	Service
+	TimerWheel
 	)
 	add_library(wallenet ${NETSRC})
 	target_link_libraries(wallenet wallesys)

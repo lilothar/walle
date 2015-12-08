@@ -9,7 +9,7 @@
 #include <walle/algo/any.h>
 #include <walle/algo/noncopyable.h>
 #include <walle/algo/memory.h>
-
+#include <walle/net/TimerWheel.h>
 
 // struct tcp_info is in <netinet/tcp.h>
 struct tcp_info;
@@ -94,7 +94,9 @@ highWaterMark)
   void connectEstablished();   // should be called only once
   // called when TcpServer has removed me from its map
   void connectDestroyed();  // should be called only once
-
+  void enableTimerOut(int64_t secs) ;
+  void disableTimerOut();
+  bool timerSet() { return _timerWheelHandler.valid(); }
  private:
   enum StateE { kDisconnected, kConnecting, kConnected, kDisconnecting };
   void handleRead(Time receiveTime);
@@ -109,7 +111,10 @@ highWaterMark)
   // void shutdownAndForceCloseInLoop(double seconds);
   void forceCloseInLoop();
   void setState(StateE s) { _state = s; }
+  void onTimerOut();
 
+  Time                       _lastactive;
+  int64_t                    _timerOutSec;
   EventLoop*                 _loop;
   const string               _name;
   StateE                     _state; 
@@ -126,6 +131,7 @@ highWaterMark)
   AddrInet                   _localAddr;
   AddrInet                   _peerAddr;
   size_t                     _highWaterMark;
+  TimerWheelHander           _timerWheelHandler;
 };
 
 typedef std::shared_ptr<TcpConnection> TcpConnectionPtr;

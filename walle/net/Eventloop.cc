@@ -58,7 +58,8 @@ EventLoop::EventLoop()
     _timer(new Timer(this)),
     _wakeupFd(createEventfd()),
     _wakeupChannel(new Channel(this, _wakeupFd)),
-    _currentActiveChannel(NULL)
+    _currentActiveChannel(NULL),
+    _wheel(this)
 {
 
   if (t_loopInThisThread)
@@ -73,11 +74,13 @@ EventLoop::EventLoop()
       std::bind(&EventLoop::handleRead, this));
   // we are always reading the wakeupfd
   _wakeupChannel->enableReading();
+  _wheel.start();
   LOG_DEBUG<<"EventLoop created "<<this<<" in thread "<<_threadId;
 }
 
 EventLoop::~EventLoop()
 {
+  _wheel.stop();
   _wakeupChannel->disableAll();
   _wakeupChannel->remove();
   ::close(_wakeupFd);
@@ -164,6 +167,18 @@ TimerId EventLoop::runEvery(int64_t interval, const TimerCallback& cb)
 {
   Time time(Time::now() + interval);
   return _timer->addTimer(cb, time, interval);
+}
+
+TimerWheelHander EventLoop::runAfterSec(int64_t sec, const TimerCallback& cb)
+{
+
+	return _wheel.addTimer( cb, sec,false);
+}
+
+TimerWheelHander EventLoop::runEverySec(int64_t sec, const TimerCallback& cb)
+{
+
+	return _wheel.addTimer( cb, sec,true);
 }
 
 void EventLoop::cancel(TimerId timerId)

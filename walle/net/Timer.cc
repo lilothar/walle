@@ -43,6 +43,7 @@ struct timespec fromNow(Time when)
 
 void readTimerfd(int timerfd, Time now)
 {
+  (void)now;
   uint64_t howmany;
   ssize_t n = ::read(timerfd, &howmany, sizeof howmany);
   if (n != sizeof howmany) {

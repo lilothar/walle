@@ -13,7 +13,7 @@ namespace walle {
 namespace sys{
 
 class LogFile;
-class AsyncLogging :public Thread,std::noncopyable
+class AsyncLogging :std::noncopyable
 {
  public:
 
@@ -35,7 +35,7 @@ class AsyncLogging :public Thread,std::noncopyable
     if (_isrunning)
         return;
     _isrunning = true;
-    start();
+    _th.start();
     _latch.wait();
   }
   void stop()
@@ -43,10 +43,10 @@ class AsyncLogging :public Thread,std::noncopyable
     if (_isrunning) {
         _isrunning = false;
         _cond.signal();
-        join();
+        _th.join();
     }
   }
-virtual void run();
+  void run();
 
 
  private:
@@ -69,6 +69,7 @@ virtual void run();
   Buffer       *_currentBuffer;
   Buffer       *_nextBuffer;
   BufferVector _buffers;
+  Thread       _th;
 };
 
 }

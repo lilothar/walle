@@ -296,7 +296,8 @@ void Service::version()
 }
 
 void Service::onReadSignal(Time t)
- {
+{
+	(void)t;
 	struct signalfd_siginfo fdsi;
 	memset(&fdsi,0,sizeof(fdsi));
 	ssize_t s = read(_signalfd, &fdsi, sizeof(struct signalfd_siginfo));

@@ -22,6 +22,7 @@ int createSignalfd(int fd, sigset_t *mask)
 }
 void handread(Time t)
 {
+	(void)t;
 	struct signalfd_siginfo fdsi;
 	memset(&fdsi,0,sizeof(fdsi));
 	ssize_t s = read(sfd, &fdsi, sizeof(struct signalfd_siginfo));

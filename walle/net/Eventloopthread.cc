@@ -1,16 +1,17 @@
 #include <walle/net/Eventloopthread.h>
-
 #include <walle/net/Eventloop.h>
 
 using namespace walle::sys;
 
 namespace walle {
 namespace net {
-EventLoopThread::EventLoopThread(const ThreadInitCallback& cb)
+	
+EventLoopThread::EventLoopThread(const ThreadInitCallback& cb, const string & name)
   : _loop(NULL),
     _exiting(false), // FIXME: number it
     _mutex(),
     _cond(),
+    _thread(std::bind(&EventLoopThread::threadFunc, this), name),
     _callback(cb)
 {
 }
@@ -23,14 +24,15 @@ EventLoopThread::~EventLoopThread()
     // still a tiny chance to call destructed object, if threadFunc exits just now.
     // but when EventLoopThread destructs, usually programming is exiting anyway.
     _loop->quit();
-    join();
+    _thread.join();
   }
 }
 
 EventLoop* EventLoopThread::startLoop()
 {
-  assert(!running());
-  start();
+  assert(!_thread.started());
+
+  _thread.start();
 
   {
     ScopeMutex lock(&_mutex);
@@ -43,7 +45,7 @@ EventLoop* EventLoopThread::startLoop()
   return _loop;
 }
 
-void EventLoopThread::run()
+void EventLoopThread::threadFunc()
 {
   EventLoop loop;
 

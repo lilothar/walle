@@ -32,6 +32,7 @@ void removeConnection(EventLoop* loop, const TcpConnectionPtr& conn)
 
 void removeConnector(const ConnectorPtr& connector)
 {
+	(void)connector;
   //connector->
 }
 }

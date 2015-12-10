@@ -229,6 +229,7 @@ namespace sys {
 		vector<string> Config::getStringList(const string &section,
 									const string& key, const string &d) const
 		{
+			(void)d;
 			vector<string> ret;
 			SectionMapCItr it = _configMap.find(section);
 			if (it == _configMap.end()) {

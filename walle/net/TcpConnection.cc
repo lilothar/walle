@@ -23,7 +23,9 @@ void defaultMessageCallback(const TcpConnectionPtr& conn,
                             Time receiveTime)
 
 {
-  buffer->retrieveAll();
+	(void)conn;
+	(void)receiveTime;
+  	buffer->retrieveAll();
 }
 typedef std::function<void (const StringPice&)> connSendFunc;
 struct ConnSendAdapter{

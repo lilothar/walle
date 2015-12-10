@@ -18,8 +18,10 @@ AsyncLogging::AsyncLogging(const string& basename,
     _cond(),
     _currentBuffer(new Buffer),
     _nextBuffer(new Buffer),
-    _buffers()
+    _buffers(),
+    _th(std::bind(&AsyncLogging::run,this),"async-log")
 {
+  
   _currentBuffer->bzero();
   _nextBuffer->bzero();
   _buffers.reserve(16);
@@ -47,7 +49,6 @@ void AsyncLogging::append(const char* logline, size_t len)
 
 void AsyncLogging::run()
 {
-  assert(_alive == true);
   _latch.down();
   LogFile output(_basename, _rollSize, false);
   Buffer *newBuffer1 = new Buffer;

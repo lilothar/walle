@@ -39,6 +39,8 @@ private:
 	
   void onMessage(const TcpConnectionPtr& conn, Buffer* buf, Time time)
   {
+  	(void)conn;
+  	(void)time;
   	_recived +=buf->readableBytes();
     buf->retrieveAll();
 	//LOG_INFO<<"recived bytes: "<<_recived;

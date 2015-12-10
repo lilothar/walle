@@ -6,7 +6,6 @@
 #include <walle/net/Callback.h>
 #include <walle/net/Channel.h>
 #include <walle/net/Connector.h>
-#include <walle/net/Endian.h>
 #include <walle/net/Eventloop.h>
 #include <walle/net/Eventloopthread.h>
 #include <walle/net/Eventloopthreadpool.h>

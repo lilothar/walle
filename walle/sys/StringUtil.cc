@@ -259,7 +259,7 @@ char *  StringUtil::trim(char *str, const char *what, int mode)
 	if(mode&1) {
 		p = ret;
 		while (*p) {
-			if(!*p & mask[*p]) {
+			if(!(*p & mask[*p])) {
 				break;
 			}
 			p++;
@@ -271,7 +271,7 @@ char *  StringUtil::trim(char *str, const char *what, int mode)
 	if(mode&2) {
 		p = ret + strlen((const char*)ret);
 		while (p >= ret) {
-			if(!*p & mask[*p]) {
+			if(!(*p & mask[*p])) {
 				break;
 			}
 			*p = '\0';

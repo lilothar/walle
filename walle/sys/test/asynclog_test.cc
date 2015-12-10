@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include <sys/resource.h>
 using namespace std;
-int kRollSize = 1000*1000*1000;
+int kRollSize = 1000*1000*100;
 using namespace walle::sys;
 AsyncLogging* g_asyncLog = NULL;
 

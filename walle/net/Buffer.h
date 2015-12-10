@@ -5,7 +5,7 @@
 #include <vector>
 #include <assert.h>
 #include <string.h>
-#include <walle/net/Endian.h>
+#include <walle/sys/Encode.h>
 #include <walle/sys/StringPice.h>
 
 using std::string;
@@ -237,7 +237,7 @@ public:
       ///
       void appendInt64(int64_t x)
       {
-        int64_t be64 = Endian::hostToNetwork64(x);
+        int64_t be64 = walle::sys::hton64(x);
         append(&be64, sizeof be64);
       }
     
@@ -246,13 +246,13 @@ public:
       ///
       void appendInt32(int32_t x)
       {
-        int32_t be32 = Endian::hostToNetwork32(x);
+        int32_t be32 = walle::sys::hton32(x);
         append(&be32, sizeof be32);
       }
     
       void appendInt16(int16_t x)
       {
-        int16_t be16 = Endian::hostToNetwork16(x);
+        int16_t be16 = walle::sys::hton16(x);
         append(&be16, sizeof be16);
       }
     
@@ -306,7 +306,7 @@ public:
         assert(readableBytes() >= sizeof(int64_t));
         int64_t be64 = 0;
         ::memcpy(&be64, peek(), sizeof be64);
-        return Endian::networkToHost64(be64);
+        return walle::sys::ntoh64(be64);
       }
     
       ///
@@ -318,7 +318,7 @@ public:
         assert(readableBytes() >= sizeof(int32_t));
         int32_t be32 = 0;
         ::memcpy(&be32, peek(), sizeof be32);
-        return Endian::networkToHost32(be32);
+        return walle::sys::ntoh32(be32);
       }
     
       int16_t peekInt16() const
@@ -326,7 +326,7 @@ public:
         assert(readableBytes() >= sizeof(int16_t));
         int16_t be16 = 0;
         ::memcpy(&be16, peek(), sizeof be16);
-        return Endian::networkToHost16(be16);
+        return walle::sys::ntoh16(be16);
       }
     
       int8_t peekInt8() const
@@ -341,7 +341,7 @@ public:
       ///
       void prependInt64(int64_t x)
       {
-        int64_t be64 = Endian::hostToNetwork64(x);
+        int64_t be64 = walle::sys::hton64(x);
         prepend(&be64, sizeof be64);
       }
     
@@ -350,13 +350,13 @@ public:
       ///
       void prependInt32(int32_t x)
       {
-        int32_t be32 = Endian::hostToNetwork32(x);
+        int32_t be32 = walle::sys::hton32(x);
         prepend(&be32, sizeof be32);
       }
     
       void prependInt16(int16_t x)
       {
-        int16_t be16 = Endian::hostToNetwork16(x);
+        int16_t be16 = walle::sys::hton16(x);
         prepend(&be16, sizeof be16);
       }
     

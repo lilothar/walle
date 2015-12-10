@@ -6,6 +6,8 @@
 #include <walle/algo/checked_delete.h>
 #include <memory>          // for std::auto_ptr
 
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+
 namespace std {
 
 template<class T> class scoped_ptr // noncopyable

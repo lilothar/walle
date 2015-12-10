@@ -57,6 +57,7 @@
 #include <walle/sys/LogFile.h>
 #include <walle/sys/Blockqueue.h>
 #include <walle/sys/Asynclog.h>
+#include <walle/sys/Encode.h>
 
 
 #endif

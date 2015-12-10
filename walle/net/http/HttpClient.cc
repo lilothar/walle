@@ -73,11 +73,14 @@ void HttpClient::onConnection(const TcpConnectionPtr& conn)
 }
 void HttpClient::onWriteComplete(const TcpConnectionPtr& conn)
 {
+	(void)conn;
 	LOG_DEBUG<<"send request complete wait for response";
 }
 
 void HttpClient::onMessage(const TcpConnectionPtr& conn, Buffer* buf, Time time)
 {
+	(void)conn;
+	(void)time;
 	const char* str = buf->peek();
 	size_t readablesize = buf->readableBytes();
 	size_t parsedsize = _response.parseResponse(str,readablesize);

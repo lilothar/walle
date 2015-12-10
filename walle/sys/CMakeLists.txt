@@ -11,6 +11,7 @@ set(SYS_SRC
 	AppendFile
 	Processinfo
 	Logging
+	LocalThread
 	LogStream
 	Histogram
 	Url

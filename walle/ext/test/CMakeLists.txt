@@ -1,2 +1,7 @@
 add_executable(simplereader simplewriter.cc)
 add_executable(simplewriter simplewriter.cc)
+add_executable(xml_edit_node_test xml_edit_node_test.cc)
+add_executable(xml_read_test xml_read_test.cc)
+add_executable(xml_remove_node_test xml_remove_node_test.cc)
+add_executable(xml_write_test xml_write_test.cc)
+add_executable(xml_write_test2 xml_write_test2.cc)

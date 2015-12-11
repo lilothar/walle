@@ -1,5 +1,7 @@
 #ifndef RAPIDXML_UTILS_HPP_INCLUDED
 #define RAPIDXML_UTILS_HPP_INCLUDED
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+#pragma GCC diagnostic ignored "-Wshadow"
 
 // Copyright (C) 2006, 2009 Marcin Kalicinski
 // Version 1.13

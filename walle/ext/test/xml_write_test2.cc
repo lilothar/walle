@@ -10,7 +10,7 @@
 using namespace rapidxml;  
 using namespace std;  
   
-int main(int argc, char* argv[])  
+int main()  
 {  
   
     xml_document<> doc; //ÊÇ½âÎöÆ÷  

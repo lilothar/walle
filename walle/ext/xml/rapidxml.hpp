@@ -19,6 +19,8 @@
     #pragma warning(push)
     #pragma warning(disable:4127)   // Conditional expression is constant
 #endif
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+#pragma GCC diagnostic ignored "-Wshadow"
 
 ///////////////////////////////////////////////////////////////////////////
 // RAPIDXML_PARSE_ERROR

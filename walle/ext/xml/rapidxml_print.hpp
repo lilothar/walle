@@ -1,5 +1,7 @@
 #ifndef RAPIDXML_PRINT_HPP_INCLUDED
 #define RAPIDXML_PRINT_HPP_INCLUDED
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+#pragma GCC diagnostic ignored "-Wshadow"
 
 // Copyright (C) 2006, 2009 Marcin Kalicinski
 // Version 1.13
@@ -177,6 +179,7 @@ namespace rapidxml
         template<class OutIt, class Ch>
         inline OutIt print_attributes(OutIt out, const xml_node<Ch> *node, int flags)
         {
+        	(void)flags;
             for (xml_attribute<Ch> *attribute = node->first_attribute(); attribute; attribute = attribute->next_attribute())
             {
                 if (attribute->name() && attribute->value())

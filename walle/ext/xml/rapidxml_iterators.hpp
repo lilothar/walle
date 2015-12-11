@@ -5,6 +5,8 @@
 // Version 1.13
 // Revision $DateTime: 2009/05/13 01:46:17 $
 //! \file rapidxml_iterators.hpp This file contains rapidxml iterators
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+#pragma GCC diagnostic ignored "-Wshadow"
 
 #include "rapidxml.hpp"
 

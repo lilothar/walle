@@ -1,0 +1,22 @@
+#easy install
+
+>mkdir build
+>cd build
+>cmake ../
+>make &&make install
+
+#gen install rpm or deb
+
+>mkdir build
+>cd build
+>cmake ../
+>make package
+
+
+#make source tarball
+>mkdir build
+>cd build
+>cmake ../
+>make package_source
+
+

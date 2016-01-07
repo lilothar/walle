@@ -18,10 +18,15 @@ set(NETSRC
 	Service
 	TimerWheel
 	)
-	add_library(wallenet ${NETSRC})
-	target_link_libraries(wallenet wallesys)
+	add_library(wallenetStatic STATIC ${NETSRC})
+	target_link_libraries(wallenetStatic wallesysStatic)
+	set_target_properties(wallenetStatic PROPERTIES OUTPUT_NAME wallenet)
+	
+	add_library(wallenetShared SHARED ${NETSRC})
+	target_link_libraries(wallenetShared wallesysShared)
+	set_target_properties(wallenetShared PROPERTIES OUTPUT_NAME wallenet)
 
-	install(TARGETS wallenet DESTINATION lib)
+	install(TARGETS wallenetStatic wallenetShared DESTINATION lib)
 	file(GLOB NETHEADERS "*.h")
 	install(FILES ${NETHEADERS} DESTINATION include/walle/net)
 

@@ -17,6 +17,8 @@
 
 #define SYSTEM_PAGESIZE       @SYSTEM_PAGESIZE@
 
+#define SYSTEM_PLATE          @SYSTEM_PLATE@
+
 #cmakedefine STD_CXX11
 
 #cmakedefine WALLE_DEBUG

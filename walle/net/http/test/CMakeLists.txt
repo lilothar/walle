@@ -1,5 +1,6 @@
 
 add_executable(http_test Http_test.cc)
-target_link_libraries(http_test wallehttp wallenet wallesys)
+target_link_libraries(http_test wallehttpStatic wallenetStatic wallesysStatic)
+
 add_executable(http_client http_client.cc)
-target_link_libraries(http_client wallehttp wallenet wallesys)
+target_link_libraries(http_client wallehttpStatic wallenetStatic wallesysStatic)

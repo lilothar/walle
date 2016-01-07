@@ -23,6 +23,13 @@ try_run(PAGE_SIZE_GET PAGE_SIZE_GET_BUILD
             RUN_OUTPUT_VARIABLE SYSTEM_PAGESIZE)
 message(STATUS "system page size: ${SYSTEM_PAGESIZE}")
 
+try_run(PLATE_GET PLATE_GET_BUILD
+            ${PROJECT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/CMakeTmp
+            ${PROJECT_SOURCE_DIR}/cmake/getplateform.cc
+            CMAKE_FLAGS -g 
+            RUN_OUTPUT_VARIABLE SYSTEM_PLATE)
+message(STATUS "system plate form is: ${SYSTEM_PLATE}")
+
 configure_file (
   "${PROJECT_SOURCE_DIR}/walle/config/config.h.in"
   "${PROJECT_BINARY_DIR}/walle/config/config.h"

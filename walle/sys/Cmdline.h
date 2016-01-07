@@ -40,69 +40,11 @@
 #include <algorithm>
 #include <cxxabi.h>
 #include <cstdlib>
+#include <walle/algo/lexical_cast.h>
 namespace walle {
 namespace sys{
 
 namespace detail{
-
-template <typename Target, typename Source, bool Same>
-class lexical_cast_t{
-public:
-  static Target cast(const Source &arg){
-    Target ret;
-    std::stringstream ss;
-    if (!(ss<<arg && ss>>ret && ss.eof()))
-      throw std::bad_cast();
-    
-    return ret;
-  }
-};
-
-template <typename Target, typename Source>
-class lexical_cast_t<Target, Source, true>{
-public:
-  static Target cast(const Source &arg){
-    return arg;
-  }  
-};
-
-template <typename Source>
-class lexical_cast_t<std::string, Source, false>{
-public:
-  static std::string cast(const Source &arg){
-    std::ostringstream ss;
-    ss<<arg;
-    return ss.str();
-  }
-};
-
-template <typename Target>
-class lexical_cast_t<Target, std::string, false>{
-public:
-  static Target cast(const std::string &arg){
-    Target ret;
-    std::istringstream ss(arg);
-    if (!(ss>>ret && ss.eof()))
-      throw std::bad_cast();
-    return ret;
-  }
-};
-
-template <typename T1, typename T2>
-struct is_same {
-  static const bool value = false;
-};
-
-template <typename T>
-struct is_same<T, T>{
-  static const bool value = true;
-};
-
-template<typename Target, typename Source>
-Target lexical_cast(const Source &arg)
-{
-  return lexical_cast_t<Target, Source, detail::is_same<Target, Source>::value>::cast(arg);
-}
 
 static inline std::string demangle(const std::string &name)
 {
@@ -122,7 +64,7 @@ std::string readable_typename()
 template <class T>
 std::string default_value(T def)
 {
-  return detail::lexical_cast<std::string>(def);
+  return std::lexical_cast<std::string>(def);
 }
 
 template <>
@@ -147,7 +89,7 @@ private:
 template <class T>
 struct default_reader{
   T operator()(const std::string &str){
-    return detail::lexical_cast<T>(str);
+    return std::lexical_cast<T>(str);
   }
 };
 
@@ -306,7 +248,6 @@ oneof_reader<T> oneof(T a1, T a2, T a3, T a4, T a5, T a6, T a7, T a8, T a9, T a1
   ret.add(a10);
   return ret;
 }
-
 //-----
 
 class parser{

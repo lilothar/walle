@@ -10,7 +10,7 @@ if(SYSTEM_PLATE MATCHES ubuntu)
 elseif(SYSTEM_PLATE MATCHES centos)
     set (CPACK_GENERATOR "RPM")
 else ()
-    set (CPACK_GENERATOR "TAZ")
+    set (CPACK_GENERATOR "TGZ")
 endif()
 
 set (CPACK_SOURCE_GENERATOR ${CPACK_SOURCE_ZIP})

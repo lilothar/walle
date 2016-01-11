@@ -34,6 +34,7 @@ endif()
 
 if(COMPILER_SUPPORTS_CXX11 AND USE_C11)
     set(CXX_FLAGS "${CXX_FLAGS} -std=c++11")
+    option(STD_CXX11 "use c++ 11" ON)
 else()
     set(CXX_FLAGS "${CXX_FLAGS} -std=c++0x")
 endif()

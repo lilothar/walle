@@ -9,8 +9,8 @@ message(STATUS  "system version: ${CMAKE_SYSTEM_VERSION}")
 
 include(${CMAKE_ROOT}/Modules/TestBigEndian.cmake) 
 
-test_big_endian(B) 
-if(B) 
+test_big_endian(WORDS_BIGENDIAN) 
+if(WORDS_BIGENDIAN) 
 	set(SYSTEM_BIGEND 1) 
 else () 
 	set(SYSTEM_BIGEND 0) 
@@ -30,6 +30,16 @@ try_run(PLATE_GET PLATE_GET_BUILD
             RUN_OUTPUT_VARIABLE SYSTEM_PLATE)
 message(STATUS "system plate form is: ${SYSTEM_PLATE}")
 
+set(TRY_COMPILE_CODE "if(__builtin_expect(1<2, 1)) {}")
+CONFIGURE_FILE(${PROJECT_SOURCE_DIR}/cmake/buildin.c ${PROJECT_BINARY_DIR}/check-builtin-expect.c)
+TRY_COMPILE(HAVE_BUILTIN_EXPECT ${PROJECT_BINARY_DIR} 
+            ${PROJECT_BINARY_DIR}/check-builtin-expect.c) 
+
+set(TRY_COMPILE_CODE "int leading_zeros = __builtin_ctzll(4)")
+CONFIGURE_FILE(${PROJECT_SOURCE_DIR}/cmake/buildin.c ${PROJECT_BINARY_DIR}/check-builtin-ctz.c)
+TRY_COMPILE(HAVE_BUILTIN_CTZ ${PROJECT_BINARY_DIR} 
+            ${PROJECT_BINARY_DIR}/check-builtin-ctz.c) 
+            
 configure_file (
   "${PROJECT_SOURCE_DIR}/walle/config/config.h.in"
   "${PROJECT_BINARY_DIR}/walle/config/config.h"

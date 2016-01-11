@@ -1,17 +1,12 @@
 
-ADD_LIBRARY(quicklzShared SHARED quicklz.c)
-ADD_LIBRARY(quicklzStatic STATIC quicklz.c)
+ADD_LIBRARY(quicklzShared SHARED quicklz/quicklz.c)
+ADD_LIBRARY(quicklzStatic STATIC quicklz/quicklz.c)
 
 set_target_properties(quicklzShared  PROPERTIES OUTPUT_NAME quicklz)
 set_target_properties(quicklzStatic  PROPERTIES OUTPUT_NAME quicklz)
 
-ADD_LIBRARY(snappyShared SHARED snappy.c)
-ADD_LIBRARY(snappyStatic STATIC snappy.c)
+INSTALL(FILES quicklz/quicklz.h  DESTINATION include/walle/compress)
 
-set_target_properties(snappyShared  PROPERTIES OUTPUT_NAME snappy)
-set_target_properties(snappyStatic  PROPERTIES OUTPUT_NAME snappy)
+INSTALL(TARGETS quicklzShared quicklzStatic  DESTINATION lib)
 
-INSTALL(FILES quicklz.h snappy.h snappy_compact.h DESTINATION include/walle/compress)
-
-INSTALL(TARGETS quicklzShared quicklzStatic snappyStatic snappyShared DESTINATION lib)
-
+add_subdirectory(snappy)

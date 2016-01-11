@@ -768,7 +768,7 @@ int sigar_proc_mem_get(sigar_t *sigar, sigar_pid_t pid,
     return SIGAR_OK;
 }
 
-SIGAR_INLINE sigar_uint64_t get_named_proc_token(char *buffer,
+ sigar_uint64_t get_named_proc_token(char *buffer,
                                                  char *token) {
   char *ptr = strstr(buffer, token);
   if (!ptr) {

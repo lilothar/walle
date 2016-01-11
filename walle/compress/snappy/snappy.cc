@@ -36,6 +36,8 @@
 #include <string>
 #include <vector>
 
+#pragma GCC diagnostic ignored "-Wunused-function"
+#pragma GCC diagnostic ignored "-Wsign-compare"
 
 namespace snappy {
 
@@ -1010,7 +1012,7 @@ class SnappyIOVecWriter {
       assert(curr_iov_written_ <= output_iov_[curr_iov_index_].iov_len);
       if (curr_iov_written_ >= output_iov_[curr_iov_index_].iov_len) {
         // This iovec is full. Go to the next one.
-        if (curr_iov_index_ + 1 >= output_iov_count_) {
+        if (static_cast<size_t>(curr_iov_index_ + 1) >= output_iov_count_) {
           return false;
         }
         curr_iov_written_ = 0;
@@ -1257,10 +1259,14 @@ class SnappyDecompressionValidator {
     return expected_ == produced_;
   }
   inline bool Append(const char* ip, size_t len) {
+    (void)ip;
     produced_ += len;
     return produced_ <= expected_;
   }
   inline bool TryFastAppend(const char* ip, size_t available, size_t length) {
+    (void)ip;
+    (void)available;
+    (void)length;
     return false;
   }
   inline bool AppendFromSelf(size_t offset, size_t len) {

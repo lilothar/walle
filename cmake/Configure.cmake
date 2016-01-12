@@ -38,7 +38,7 @@ TRY_COMPILE(HAVE_BUILTIN_EXPECT ${PROJECT_BINARY_DIR}
 set(TRY_COMPILE_CODE "int leading_zeros = __builtin_ctzll(4)")
 CONFIGURE_FILE(${PROJECT_SOURCE_DIR}/cmake/buildin.c ${PROJECT_BINARY_DIR}/check-builtin-ctz.c)
 TRY_COMPILE(HAVE_BUILTIN_CTZ ${PROJECT_BINARY_DIR} 
-            ${PROJECT_BINARY_DIR}/check-builtin-ctz.c) 
+            ${PROJECT_BINARY_DIR}/check-builtin-ctz.c)
             
 configure_file (
   "${PROJECT_SOURCE_DIR}/walle/config/config.h.in"

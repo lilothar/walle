@@ -17,7 +17,7 @@ set (CPACK_SOURCE_GENERATOR ${CPACK_SOURCE_ZIP})
 set (CPACK_SOURCE_PACKAGE_FILE_NAME walle-source)
 #set (CPACK_PACKAGE_INSTALL_DIRECTORY /usr/local/walle)
 #message(STATUS "package type ${PACK}")
-set (CPACK_PACKAGING_INSTALL_PREFIX /usr/local/walle)
+#set (CPACK_PACKAGING_INSTALL_PREFIX /usr/local/)
 
 #ubuntu debian
 #set (CPACK_GENERATOR "DEB")
